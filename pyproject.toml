@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "googleapis-common-protos-stubs"
+version = "1.0.0"
+license = "Apache-2.0"
+description = "Type stubs for googleapis-common-protos"
+authors = ["Henrik Bruåsdal <henrik.bruasdal@gmail.com>"]
+readme = "README.md"
+repository = "https://github.com/henribru/googleapis-common-protos-stubs"
+packages = [
+    { include = "google-stubs" },
+]
+
+
+[tool.poetry.dependencies]
+python = "^2.7 || ^3.4"
+typing = "^3.7"
+typing-extensions = "^3.7"
+googleapis-common-protos = "^1.6"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
