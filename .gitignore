@@ -1,8 +1,6 @@
 *
-!*/
 !/.gitignore
 !/google-stubs/**
 !/pyproject.toml
-!/poetry.lock
 !/README.md
 !/LICENSE
