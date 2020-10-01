@@ -14,7 +14,7 @@ packages = [
 python = "^2.7 || ^3.4"
 typing = { version = "^3.7", python = "<3.5" }
 typing-extensions = "^3.7"
-googleapis-common-protos = "^1.6"
+googleapis-common-protos = "^1.52.0"
 
 [tool.poetry.dev-dependencies]
 protobuf = "^3.11.2"
