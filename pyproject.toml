@@ -12,7 +12,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^2.7 || ^3.4"
-typing = "^3.7"
+typing = { version = "^3.7", python = "<3.5" }
 typing-extensions = "^3.7"
 googleapis-common-protos = "^1.6"
 
