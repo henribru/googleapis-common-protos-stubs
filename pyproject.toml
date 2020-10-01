@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "googleapis-common-protos-stubs"
-version = "1.0.0"
+version = "1.1.0"
 license = "Apache-2.0"
 description = "Type stubs for googleapis-common-protos"
 authors = ["Henrik Bruåsdal <henrik.bruasdal@gmail.com>"]
