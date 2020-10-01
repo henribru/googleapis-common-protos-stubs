@@ -10,12 +10,29 @@ packages = [
     { include = "google-stubs" },
 ]
 
-
 [tool.poetry.dependencies]
 python = "^2.7 || ^3.4"
 typing = "^3.7"
 typing-extensions = "^3.7"
 googleapis-common-protos = "^1.6"
+
+[tool.poetry.dev-dependencies]
+protobuf = "^3.11.2"
+mypy-protobuf = "^1.16"
+isort = { version = "^5.5.4", python = ">=3.7, <4.0" }
+black = { version = "^20.8b1", python = ">=3.6" }
+mypy = { version = "^0.782", python = ">=3.5" }
+
+[tool.isort]
+profile = "black"
+known_first_party = [
+    "google.api",
+    "google.logging",
+    "google.longrunning",
+    "google.rpc",
+    "google.type"
+]
+combine_as_imports = true
 
 [build-system]
 requires = ["poetry>=0.12"]
