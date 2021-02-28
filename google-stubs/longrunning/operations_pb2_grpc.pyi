@@ -6,7 +6,7 @@ import abc
 import google.protobuf.empty_pb2
 import grpc
 
-from .operations_pb2 import *
+from .operations_proto_pb2 import *
 
 class OperationsStub:
     def __init__(self, channel: grpc.Channel) -> None: ...
