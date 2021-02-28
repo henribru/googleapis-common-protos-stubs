@@ -17,6 +17,7 @@ classifiers = [
 python = "^3.6"
 typing-extensions = "^3.7.4.3"
 googleapis-common-protos = "^1.52.0"
+grpc-stubs = "^1.24.5"
 
 [tool.poetry.dev-dependencies]
 protobuf = "^3.15.3"
