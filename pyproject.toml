@@ -30,7 +30,8 @@ mypy = "^0.910"
 profile = "black"
 known_first_party = [
     "google.api",
-    "google.logging",
+    "google.gapic.metadata",
+    "google.logging.type",
     "google.longrunning",
     "google.rpc",
     "google.type"
