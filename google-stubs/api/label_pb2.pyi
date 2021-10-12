@@ -11,27 +11,40 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# A description of a label.
 class LabelDescriptor(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
-    class _ValueType(
-        google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[ValueType.V],
+    # Value types that can be used as label values.
+    class ValueType(_ValueType, metaclass=_ValueTypeEnumTypeWrapper):
+        pass
+    class _ValueType:
+        V = typing.NewType("V", builtins.int)
+    class _ValueTypeEnumTypeWrapper(
+        google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_ValueType.V],
         builtins.type,
     ):
         DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+        # A variable-length string. This is the default.
         STRING = LabelDescriptor.ValueType.V(0)
+        # Boolean; true or false.
         BOOL = LabelDescriptor.ValueType.V(1)
+        # A 64-bit signed integer.
         INT64 = LabelDescriptor.ValueType.V(2)
-    class ValueType(metaclass=_ValueType):
-        V = typing.NewType("V", builtins.int)
+    # A variable-length string. This is the default.
     STRING = LabelDescriptor.ValueType.V(0)
+    # Boolean; true or false.
     BOOL = LabelDescriptor.ValueType.V(1)
+    # A 64-bit signed integer.
     INT64 = LabelDescriptor.ValueType.V(2)
 
     KEY_FIELD_NUMBER: builtins.int
     VALUE_TYPE_FIELD_NUMBER: builtins.int
     DESCRIPTION_FIELD_NUMBER: builtins.int
+    # The label key.
     key: typing.Text = ...
+    # The type of data that can be assigned to the label.
     value_type: global___LabelDescriptor.ValueType.V = ...
+    # A human-readable description for the label.
     description: typing.Text = ...
     def __init__(
         self,

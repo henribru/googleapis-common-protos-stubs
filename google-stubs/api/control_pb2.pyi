@@ -10,9 +10,14 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# Selects and configures the service controller used by the service.  The
+# service controller handles features like abuse, quota, billing, logging,
+# monitoring, etc.
 class Control(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ENVIRONMENT_FIELD_NUMBER: builtins.int
+    # The service control environment to use. If empty, no control plane
+    # feature (like quota and billing) will be enabled.
     environment: typing.Text = ...
     def __init__(
         self,

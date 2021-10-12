@@ -9,11 +9,15 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# Represents a fraction in terms of a numerator divided by a denominator.
 class Fraction(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NUMERATOR_FIELD_NUMBER: builtins.int
     DENOMINATOR_FIELD_NUMBER: builtins.int
+    # The portion of the denominator in the faction, e.g. 2 in 2/3.
     numerator: builtins.int = ...
+    # The value by which the numerator is divided, e.g. 3 in 2/3. Must be
+    # positive.
     denominator: builtins.int = ...
     def __init__(
         self,

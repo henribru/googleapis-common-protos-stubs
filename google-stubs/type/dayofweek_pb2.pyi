@@ -9,30 +9,49 @@ import typing
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
-global___DayOfWeek = DayOfWeek
+# Represents a day of week.
+class DayOfWeek(_DayOfWeek, metaclass=_DayOfWeekEnumTypeWrapper):
+    pass
 
-class _DayOfWeek(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[DayOfWeek.V],
+class _DayOfWeek:
+    V = typing.NewType("V", builtins.int)
+
+class _DayOfWeekEnumTypeWrapper(
+    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_DayOfWeek.V],
     builtins.type,
 ):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+    # The unspecified day-of-week.
     DAY_OF_WEEK_UNSPECIFIED = DayOfWeek.V(0)
+    # The day-of-week of Monday.
     MONDAY = DayOfWeek.V(1)
+    # The day-of-week of Tuesday.
     TUESDAY = DayOfWeek.V(2)
+    # The day-of-week of Wednesday.
     WEDNESDAY = DayOfWeek.V(3)
+    # The day-of-week of Thursday.
     THURSDAY = DayOfWeek.V(4)
+    # The day-of-week of Friday.
     FRIDAY = DayOfWeek.V(5)
+    # The day-of-week of Saturday.
     SATURDAY = DayOfWeek.V(6)
+    # The day-of-week of Sunday.
     SUNDAY = DayOfWeek.V(7)
 
-class DayOfWeek(metaclass=_DayOfWeek):
-    V = typing.NewType("V", builtins.int)
-
+# The unspecified day-of-week.
 DAY_OF_WEEK_UNSPECIFIED = DayOfWeek.V(0)
+# The day-of-week of Monday.
 MONDAY = DayOfWeek.V(1)
+# The day-of-week of Tuesday.
 TUESDAY = DayOfWeek.V(2)
+# The day-of-week of Wednesday.
 WEDNESDAY = DayOfWeek.V(3)
+# The day-of-week of Thursday.
 THURSDAY = DayOfWeek.V(4)
+# The day-of-week of Friday.
 FRIDAY = DayOfWeek.V(5)
+# The day-of-week of Saturday.
 SATURDAY = DayOfWeek.V(6)
+# The day-of-week of Sunday.
 SUNDAY = DayOfWeek.V(7)
+global___DayOfWeek = DayOfWeek

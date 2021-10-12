@@ -9,26 +9,84 @@ import typing
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
-global___LaunchStage = LaunchStage
+# The launch stage as defined by [Google Cloud Platform
+# Launch Stages](http://cloud.google.com/terms/launch-stages).
+class LaunchStage(_LaunchStage, metaclass=_LaunchStageEnumTypeWrapper):
+    pass
 
-class _LaunchStage(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[LaunchStage.V],
+class _LaunchStage:
+    V = typing.NewType("V", builtins.int)
+
+class _LaunchStageEnumTypeWrapper(
+    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_LaunchStage.V],
     builtins.type,
 ):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+    # Do not use this default value.
     LAUNCH_STAGE_UNSPECIFIED = LaunchStage.V(0)
+    # Early Access features are limited to a closed group of testers. To use
+    # these features, you must sign up in advance and sign a Trusted Tester
+    # agreement (which includes confidentiality provisions). These features may
+    # be unstable, changed in backward-incompatible ways, and are not
+    # guaranteed to be released.
     EARLY_ACCESS = LaunchStage.V(1)
+    # Alpha is a limited availability test for releases before they are cleared
+    # for widespread use. By Alpha, all significant design issues are resolved
+    # and we are in the process of verifying functionality. Alpha customers
+    # need to apply for access, agree to applicable terms, and have their
+    # projects whitelisted. Alpha releases don’t have to be feature complete,
+    # no SLAs are provided, and there are no technical support obligations, but
+    # they will be far enough along that customers can actually use them in
+    # test environments or for limited-use tests -- just like they would in
+    # normal production cases.
     ALPHA = LaunchStage.V(2)
+    # Beta is the point at which we are ready to open a release for any
+    # customer to use. There are no SLA or technical support obligations in a
+    # Beta release. Products will be complete from a feature perspective, but
+    # may have some open outstanding issues. Beta releases are suitable for
+    # limited production use cases.
     BETA = LaunchStage.V(3)
+    # GA features are open to all developers and are considered stable and
+    # fully qualified for production use.
     GA = LaunchStage.V(4)
+    # Deprecated features are scheduled to be shut down and removed. For more
+    # information, see the “Deprecation Policy” section of our [Terms of
+    # Service](https://cloud.google.com/terms/)
+    # and the [Google Cloud Platform Subject to the Deprecation
+    # Policy](https://cloud.google.com/terms/deprecation) documentation.
     DEPRECATED = LaunchStage.V(5)
 
-class LaunchStage(metaclass=_LaunchStage):
-    V = typing.NewType("V", builtins.int)
-
+# Do not use this default value.
 LAUNCH_STAGE_UNSPECIFIED = LaunchStage.V(0)
+# Early Access features are limited to a closed group of testers. To use
+# these features, you must sign up in advance and sign a Trusted Tester
+# agreement (which includes confidentiality provisions). These features may
+# be unstable, changed in backward-incompatible ways, and are not
+# guaranteed to be released.
 EARLY_ACCESS = LaunchStage.V(1)
+# Alpha is a limited availability test for releases before they are cleared
+# for widespread use. By Alpha, all significant design issues are resolved
+# and we are in the process of verifying functionality. Alpha customers
+# need to apply for access, agree to applicable terms, and have their
+# projects whitelisted. Alpha releases don’t have to be feature complete,
+# no SLAs are provided, and there are no technical support obligations, but
+# they will be far enough along that customers can actually use them in
+# test environments or for limited-use tests -- just like they would in
+# normal production cases.
 ALPHA = LaunchStage.V(2)
+# Beta is the point at which we are ready to open a release for any
+# customer to use. There are no SLA or technical support obligations in a
+# Beta release. Products will be complete from a feature perspective, but
+# may have some open outstanding issues. Beta releases are suitable for
+# limited production use cases.
 BETA = LaunchStage.V(3)
+# GA features are open to all developers and are considered stable and
+# fully qualified for production use.
 GA = LaunchStage.V(4)
+# Deprecated features are scheduled to be shut down and removed. For more
+# information, see the “Deprecation Policy” section of our [Terms of
+# Service](https://cloud.google.com/terms/)
+# and the [Google Cloud Platform Subject to the Deprecation
+# Policy](https://cloud.google.com/terms/deprecation) documentation.
 DEPRECATED = LaunchStage.V(5)
+global___LaunchStage = LaunchStage

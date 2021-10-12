@@ -11,16 +11,62 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# Monitoring configuration of the service.
+#
+# The example below shows how to configure monitored resources and metrics
+# for monitoring. In the example, a monitored resource and two metrics are
+# defined. The `library.googleapis.com/book/returned_count` metric is sent
+# to both producer and consumer projects, whereas the
+# `library.googleapis.com/book/overdue_count` metric is only sent to the
+# consumer project.
+#
+#     monitored_resources:
+#     - type: library.googleapis.com/branch
+#       labels:
+#       - key: /city
+#         description: The city where the library branch is located in.
+#       - key: /name
+#         description: The name of the branch.
+#     metrics:
+#     - name: library.googleapis.com/book/returned_count
+#       metric_kind: DELTA
+#       value_type: INT64
+#       labels:
+#       - key: /customer_id
+#     - name: library.googleapis.com/book/overdue_count
+#       metric_kind: GAUGE
+#       value_type: INT64
+#       labels:
+#       - key: /customer_id
+#     monitoring:
+#       producer_destinations:
+#       - monitored_resource: library.googleapis.com/branch
+#         metrics:
+#         - library.googleapis.com/book/returned_count
+#       consumer_destinations:
+#       - monitored_resource: library.googleapis.com/branch
+#         metrics:
+#         - library.googleapis.com/book/returned_count
+#         - library.googleapis.com/book/overdue_count
 class Monitoring(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    # Configuration of a specific monitoring destination (the producer project
+    # or the consumer project).
     class MonitoringDestination(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         MONITORED_RESOURCE_FIELD_NUMBER: builtins.int
         METRICS_FIELD_NUMBER: builtins.int
+        # The monitored resource type. The type must be defined in
+        # [Service.monitored_resources][google.api.Service.monitored_resources] section.
         monitored_resource: typing.Text = ...
-        metrics: google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+        # Names of the metrics to report to this monitoring destination.
+        # Each name must be defined in [Service.metrics][google.api.Service.metrics] section.
+        @property
+        def metrics(
+            self,
+        ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
             typing.Text
-        ] = ...
+        ]: ...
         def __init__(
             self,
             *,
@@ -35,12 +81,20 @@ class Monitoring(google.protobuf.message.Message):
         ) -> None: ...
     PRODUCER_DESTINATIONS_FIELD_NUMBER: builtins.int
     CONSUMER_DESTINATIONS_FIELD_NUMBER: builtins.int
+    # Monitoring configurations for sending metrics to the producer project.
+    # There can be multiple producer destinations, each one must have a
+    # different monitored resource type. A metric can be used in at most
+    # one producer destination.
     @property
     def producer_destinations(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         global___Monitoring.MonitoringDestination
     ]: ...
+    # Monitoring configurations for sending metrics to the consumer project.
+    # There can be multiple consumer destinations, each one must have a
+    # different monitored resource type. A metric can be used in at most
+    # one consumer destination.
     @property
     def consumer_destinations(
         self,

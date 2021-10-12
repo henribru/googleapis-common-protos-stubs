@@ -12,9 +12,11 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# Source information used to create a Service Config
 class SourceInfo(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SOURCE_FILES_FIELD_NUMBER: builtins.int
+    # All files used during config generation.
     @property
     def source_files(
         self,

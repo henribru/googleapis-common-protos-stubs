@@ -11,9 +11,29 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# `Context` defines which contexts an API requests.
+#
+# Example:
+#
+#     context:
+#       rules:
+#       - selector: "*"
+#         requested:
+#         - google.rpc.context.ProjectContext
+#         - google.rpc.context.OriginContext
+#
+# The above specifies that all methods in the API request
+# `google.rpc.context.ProjectContext` and
+# `google.rpc.context.OriginContext`.
+#
+# Available context types are defined in package
+# `google.rpc.context`.
 class Context(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     RULES_FIELD_NUMBER: builtins.int
+    # A list of RPC context rules that apply to individual API methods.
+    #
+    # **NOTE:** All service configuration rules follow "last one wins" order.
     @property
     def rules(
         self,
@@ -31,18 +51,31 @@ class Context(google.protobuf.message.Message):
 
 global___Context = Context
 
+# A context rule provides information about the context for an individual API
+# element.
 class ContextRule(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SELECTOR_FIELD_NUMBER: builtins.int
     REQUESTED_FIELD_NUMBER: builtins.int
     PROVIDED_FIELD_NUMBER: builtins.int
+    # Selects the methods to which this rule applies.
+    #
+    # Refer to [selector][google.api.DocumentationRule.selector] for syntax details.
     selector: typing.Text = ...
-    requested: google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+    # A list of full type names of requested contexts.
+    @property
+    def requested(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
         typing.Text
-    ] = ...
-    provided: google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+    ]: ...
+    # A list of full type names of provided contexts.
+    @property
+    def provided(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
         typing.Text
-    ] = ...
+    ]: ...
     def __init__(
         self,
         *,

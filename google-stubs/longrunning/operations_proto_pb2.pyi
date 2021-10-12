@@ -5,8 +5,10 @@ isort:skip_file
 import builtins
 import google.protobuf.any_pb2
 import google.protobuf.descriptor
+import google.protobuf.descriptor_pb2
 import google.protobuf.duration_pb2
 import google.protobuf.internal.containers
+import google.protobuf.internal.extension_dict
 import google.protobuf.message
 import google.rpc.status_pb2
 import typing
@@ -14,6 +16,8 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# This resource represents a long-running operation that is the result of a
+# network API call.
 class Operation(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
@@ -21,12 +25,31 @@ class Operation(google.protobuf.message.Message):
     DONE_FIELD_NUMBER: builtins.int
     ERROR_FIELD_NUMBER: builtins.int
     RESPONSE_FIELD_NUMBER: builtins.int
+    # The server-assigned name, which is only unique within the same service that
+    # originally returns it. If you use the default HTTP mapping, the
+    # `name` should be a resource name ending with `operations/{unique_id}`.
     name: typing.Text = ...
-    done: builtins.bool = ...
+    # Service-specific metadata associated with the operation.  It typically
+    # contains progress information and common metadata such as create time.
+    # Some services might not provide such metadata.  Any method that returns a
+    # long-running operation should document the metadata type, if any.
     @property
     def metadata(self) -> google.protobuf.any_pb2.Any: ...
+    # If the value is `false`, it means the operation is still in progress.
+    # If `true`, the operation is completed, and either `error` or `response` is
+    # available.
+    done: builtins.bool = ...
+    # The error result of the operation in case of failure or cancellation.
     @property
     def error(self) -> google.rpc.status_pb2.Status: ...
+    # The normal response of the operation in case of success.  If the original
+    # method returns no data on success, such as `Delete`, the response is
+    # `google.protobuf.Empty`.  If the original method is standard
+    # `Get`/`Create`/`Update`, the response should be the resource.  For other
+    # methods, the response should have the type `XxxResponse`, where `Xxx`
+    # is the original method name.  For example, if the original method name
+    # is `TakeSnapshot()`, the inferred response type is
+    # `TakeSnapshotResponse`.
     @property
     def response(self) -> google.protobuf.any_pb2.Any: ...
     def __init__(
@@ -70,13 +93,15 @@ class Operation(google.protobuf.message.Message):
     ) -> None: ...
     def WhichOneof(
         self, oneof_group: typing_extensions.Literal["result", b"result"]
-    ) -> typing_extensions.Literal["error", "response"]: ...
+    ) -> typing.Optional[typing_extensions.Literal["error", "response"]]: ...
 
 global___Operation = Operation
 
+# The request message for [Operations.GetOperation][google.longrunning.Operations.GetOperation].
 class GetOperationRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
+    # The name of the operation resource.
     name: typing.Text = ...
     def __init__(
         self,
@@ -89,15 +114,20 @@ class GetOperationRequest(google.protobuf.message.Message):
 
 global___GetOperationRequest = GetOperationRequest
 
+# The request message for [Operations.ListOperations][google.longrunning.Operations.ListOperations].
 class ListOperationsRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
     FILTER_FIELD_NUMBER: builtins.int
     PAGE_SIZE_FIELD_NUMBER: builtins.int
     PAGE_TOKEN_FIELD_NUMBER: builtins.int
+    # The name of the operation's parent resource.
     name: typing.Text = ...
+    # The standard list filter.
     filter: typing.Text = ...
+    # The standard list page size.
     page_size: builtins.int = ...
+    # The standard list page token.
     page_token: typing.Text = ...
     def __init__(
         self,
@@ -123,17 +153,20 @@ class ListOperationsRequest(google.protobuf.message.Message):
 
 global___ListOperationsRequest = ListOperationsRequest
 
+# The response message for [Operations.ListOperations][google.longrunning.Operations.ListOperations].
 class ListOperationsResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     OPERATIONS_FIELD_NUMBER: builtins.int
     NEXT_PAGE_TOKEN_FIELD_NUMBER: builtins.int
-    next_page_token: typing.Text = ...
+    # A list of operations that matches the specified filter in the request.
     @property
     def operations(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         global___Operation
     ]: ...
+    # The standard List next-page token.
+    next_page_token: typing.Text = ...
     def __init__(
         self,
         *,
@@ -149,9 +182,11 @@ class ListOperationsResponse(google.protobuf.message.Message):
 
 global___ListOperationsResponse = ListOperationsResponse
 
+# The request message for [Operations.CancelOperation][google.longrunning.Operations.CancelOperation].
 class CancelOperationRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
+    # The name of the operation resource to be cancelled.
     name: typing.Text = ...
     def __init__(
         self,
@@ -164,9 +199,11 @@ class CancelOperationRequest(google.protobuf.message.Message):
 
 global___CancelOperationRequest = CancelOperationRequest
 
+# The request message for [Operations.DeleteOperation][google.longrunning.Operations.DeleteOperation].
 class DeleteOperationRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
+    # The name of the operation resource to be deleted.
     name: typing.Text = ...
     def __init__(
         self,
@@ -179,11 +216,16 @@ class DeleteOperationRequest(google.protobuf.message.Message):
 
 global___DeleteOperationRequest = DeleteOperationRequest
 
+# The request message for [Operations.WaitOperation][google.longrunning.Operations.WaitOperation].
 class WaitOperationRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
     TIMEOUT_FIELD_NUMBER: builtins.int
+    # The name of the operation resource to wait on.
     name: typing.Text = ...
+    # The maximum duration to wait before timing out. If left blank, the wait
+    # will be at most the time permitted by the underlying HTTP/RPC protocol.
+    # If RPC context deadline is also specified, the shorter one will be used.
     @property
     def timeout(self) -> google.protobuf.duration_pb2.Duration: ...
     def __init__(
@@ -202,11 +244,37 @@ class WaitOperationRequest(google.protobuf.message.Message):
 
 global___WaitOperationRequest = WaitOperationRequest
 
+# A message representing the message types used by a long-running operation.
+#
+# Example:
+#
+#   rpc LongRunningRecognize(LongRunningRecognizeRequest)
+#       returns (google.longrunning.Operation) {
+#     option (google.longrunning.operation_info) = {
+#       response_type: "LongRunningRecognizeResponse"
+#       metadata_type: "LongRunningRecognizeMetadata"
+#     };
+#   }
 class OperationInfo(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     RESPONSE_TYPE_FIELD_NUMBER: builtins.int
     METADATA_TYPE_FIELD_NUMBER: builtins.int
+    # Required. The message name of the primary return type for this
+    # long-running operation.
+    # This type will be used to deserialize the LRO's response.
+    #
+    # If the response is in a different package from the rpc, a fully-qualified
+    # message name must be used (e.g. `google.protobuf.Struct`).
+    #
+    # Note: Altering this value constitutes a breaking change.
     response_type: typing.Text = ...
+    # Required. The message name of the metadata type for this long-running
+    # operation.
+    #
+    # If the response is in a different package from the rpc, a fully-qualified
+    # message name must be used (e.g. `google.protobuf.Struct`).
+    #
+    # Note: Altering this value constitutes a breaking change.
     metadata_type: typing.Text = ...
     def __init__(
         self,
@@ -223,4 +291,12 @@ class OperationInfo(google.protobuf.message.Message):
 
 global___OperationInfo = OperationInfo
 
-operation_info: google.protobuf.descriptor.FieldDescriptor = ...
+# Additional information regarding long-running operations.
+# In particular, this specifies the types that are returned from
+# long-running operations.
+#
+# Required for methods that return `google.longrunning.Operation`; invalid
+# otherwise.
+operation_info: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[
+    google.protobuf.descriptor_pb2.MethodOptions, global___OperationInfo
+] = ...
