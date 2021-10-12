@@ -11,6 +11,22 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# Represents civil time in one of a few possible ways:
+#
+#  * When utc_offset is set and time_zone is unset: a civil time on a calendar
+#    day with a particular offset from UTC.
+#  * When time_zone is set and utc_offset is unset: a civil time on a calendar
+#    day in a particular time zone.
+#  * When neither time_zone nor utc_offset is set: a civil time on a calendar
+#    day in local time.
+#
+# The date is relative to the Proleptic Gregorian Calendar.
+#
+# If year is 0, the DateTime is considered not to have a specific year. month
+# and day must have valid, non-zero values.
+#
+# This type is more flexible than some applications may want. Make sure to
+# document and validate your application's limitations.
 class DateTime(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     YEAR_FIELD_NUMBER: builtins.int
@@ -22,15 +38,32 @@ class DateTime(google.protobuf.message.Message):
     NANOS_FIELD_NUMBER: builtins.int
     UTC_OFFSET_FIELD_NUMBER: builtins.int
     TIME_ZONE_FIELD_NUMBER: builtins.int
+    # Optional. Year of date. Must be from 1 to 9999, or 0 if specifying a
+    # datetime without a year.
     year: builtins.int = ...
+    # Required. Month of year. Must be from 1 to 12.
     month: builtins.int = ...
+    # Required. Day of month. Must be from 1 to 31 and valid for the year and
+    # month.
     day: builtins.int = ...
+    # Required. Hours of day in 24 hour format. Should be from 0 to 23. An API
+    # may choose to allow the value "24:00:00" for scenarios like business
+    # closing time.
     hours: builtins.int = ...
+    # Required. Minutes of hour of day. Must be from 0 to 59.
     minutes: builtins.int = ...
+    # Required. Seconds of minutes of the time. Must normally be from 0 to 59. An
+    # API may allow the value 60 if it allows leap-seconds.
     seconds: builtins.int = ...
+    # Required. Fractions of seconds in nanoseconds. Must be from 0 to
+    # 999,999,999.
     nanos: builtins.int = ...
+    # UTC offset. Must be whole seconds, between -18 hours and +18 hours.
+    # For example, a UTC offset of -4:00 would be represented as
+    # { seconds: -14400 }.
     @property
     def utc_offset(self) -> google.protobuf.duration_pb2.Duration: ...
+    # Time zone.
     @property
     def time_zone(self) -> global___TimeZone: ...
     def __init__(
@@ -84,15 +117,19 @@ class DateTime(google.protobuf.message.Message):
     ) -> None: ...
     def WhichOneof(
         self, oneof_group: typing_extensions.Literal["time_offset", b"time_offset"]
-    ) -> typing_extensions.Literal["utc_offset", "time_zone"]: ...
+    ) -> typing.Optional[typing_extensions.Literal["utc_offset", "time_zone"]]: ...
 
 global___DateTime = DateTime
 
+# Represents a time zone from the
+# [IANA Time Zone Database](https://www.iana.org/time-zones).
 class TimeZone(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
     VERSION_FIELD_NUMBER: builtins.int
+    # IANA Time Zone Database time zone, e.g. "America/New_York".
     id: typing.Text = ...
+    # Optional. IANA Time Zone Database version number, e.g. "2019a".
     version: typing.Text = ...
     def __init__(
         self,

@@ -31,6 +31,29 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# `Service` is the root object of Google service configuration schema. It
+# describes basic information about a service, such as the name and the
+# title, and delegates other aspects to sub-sections. Each sub-section is
+# either a proto message or a repeated proto message that configures a
+# specific aspect, such as auth. See each proto message definition for details.
+#
+# Example:
+#
+##    type: google.api.Service
+#     config_version: 3
+#     name: calendar.googleapis.com
+#     title: Google Calendar API
+#     apis:
+#     - name: google.calendar.v3.Calendar
+#     authentication:
+#       providers:
+#       - id: google_calendar_auth
+#         jwks_uri: https://www.googleapis.com/oauth2/v1/certs
+#         issuer: https://securetoken.google.com
+#       rules:
+#       - selector: "*"
+#         requirements:
+#           provider_id: google_calendar_auth
 class Service(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     CONFIG_VERSION_FIELD_NUMBER: builtins.int
@@ -58,78 +81,129 @@ class Service(google.protobuf.message.Message):
     MONITORING_FIELD_NUMBER: builtins.int
     SYSTEM_PARAMETERS_FIELD_NUMBER: builtins.int
     SOURCE_INFO_FIELD_NUMBER: builtins.int
-    name: typing.Text = ...
-    id: typing.Text = ...
-    title: typing.Text = ...
-    producer_project_id: typing.Text = ...
+    # The semantic version of the service configuration. The config version
+    # affects the interpretation of the service configuration. For example,
+    # certain features are enabled by default for certain config versions.
+    # The latest config version is `3`.
     @property
     def config_version(self) -> google.protobuf.wrappers_pb2.UInt32Value: ...
+    # The DNS address at which this service is available,
+    # e.g. `calendar.googleapis.com`.
+    name: typing.Text = ...
+    # A unique ID for a specific instance of this message, typically assigned
+    # by the client for tracking purpose. If empty, the server may choose to
+    # generate one instead.
+    id: typing.Text = ...
+    # The product title for this service.
+    title: typing.Text = ...
+    # The Google project that owns this service.
+    producer_project_id: typing.Text = ...
+    # A list of API interfaces exported by this service. Only the `name` field
+    # of the [google.protobuf.Api][google.protobuf.Api] needs to be provided by the configuration
+    # author, as the remaining fields will be derived from the IDL during the
+    # normalization process. It is an error to specify an API interface here
+    # which cannot be resolved against the associated IDL files.
     @property
     def apis(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         google.protobuf.api_pb2.Api
     ]: ...
+    # A list of all proto message types included in this API service.
+    # Types referenced directly or indirectly by the `apis` are
+    # automatically included.  Messages which are not referenced but
+    # shall be included, such as types used by the `google.protobuf.Any` type,
+    # should be listed here by name. Example:
+    #
+    #     types:
+    #     - name: google.protobuf.Int32
     @property
     def types(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         google.protobuf.type_pb2.Type
     ]: ...
+    # A list of all enum types included in this API service.  Enums
+    # referenced directly or indirectly by the `apis` are automatically
+    # included.  Enums which are not referenced but shall be included
+    # should be listed here by name. Example:
+    #
+    #     enums:
+    #     - name: google.someapi.v1.SomeEnum
     @property
     def enums(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         google.protobuf.type_pb2.Enum
     ]: ...
+    # Additional API documentation.
     @property
     def documentation(self) -> google.api.documentation_pb2.Documentation: ...
+    # API backend configuration.
     @property
     def backend(self) -> google.api.backend_pb2.Backend: ...
+    # HTTP configuration.
     @property
     def http(self) -> google.api.http_pb2.Http: ...
+    # Quota configuration.
     @property
     def quota(self) -> google.api.quota_pb2.Quota: ...
+    # Auth configuration.
     @property
     def authentication(self) -> google.api.auth_pb2.Authentication: ...
+    # Context configuration.
     @property
     def context(self) -> google.api.context_pb2.Context: ...
+    # Configuration controlling usage of this service.
     @property
     def usage(self) -> google.api.usage_pb2.Usage: ...
+    # Configuration for network endpoints.  If this is empty, then an endpoint
+    # with the same name as the service is automatically generated to service all
+    # defined APIs.
     @property
     def endpoints(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         google.api.endpoint_pb2.Endpoint
     ]: ...
+    # Configuration for the service control plane.
     @property
     def control(self) -> google.api.control_pb2.Control: ...
+    # Defines the logs used by this service.
     @property
     def logs(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         google.api.log_pb2.LogDescriptor
     ]: ...
+    # Defines the metrics used by this service.
     @property
     def metrics(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         google.api.metric_pb2.MetricDescriptor
     ]: ...
+    # Defines the monitored resources used by this service. This is required
+    # by the [Service.monitoring][google.api.Service.monitoring] and [Service.logging][google.api.Service.logging] configurations.
     @property
     def monitored_resources(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         google.api.monitored_resource_pb2.MonitoredResourceDescriptor
     ]: ...
+    # Billing configuration.
     @property
     def billing(self) -> google.api.billing_pb2.Billing: ...
+    # Logging configuration.
     @property
     def logging(self) -> google.api.logging_pb2.Logging: ...
+    # Monitoring configuration.
     @property
     def monitoring(self) -> google.api.monitoring_pb2.Monitoring: ...
+    # System parameter configuration.
     @property
     def system_parameters(self) -> google.api.system_parameter_pb2.SystemParameters: ...
+    # Output only. The source information for this configuration if available.
     @property
     def source_info(self) -> google.api.source_info_pb2.SourceInfo: ...
     def __init__(

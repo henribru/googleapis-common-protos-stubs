@@ -12,26 +12,50 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
-global___ChangeType = ChangeType
+# Classifies set of possible modifications to an object in the service
+# configuration.
+class ChangeType(_ChangeType, metaclass=_ChangeTypeEnumTypeWrapper):
+    pass
 
-class _ChangeType(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[ChangeType.V],
+class _ChangeType:
+    V = typing.NewType("V", builtins.int)
+
+class _ChangeTypeEnumTypeWrapper(
+    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_ChangeType.V],
     builtins.type,
 ):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+    # No value was provided.
     CHANGE_TYPE_UNSPECIFIED = ChangeType.V(0)
+    # The changed object exists in the 'new' service configuration, but not
+    # in the 'old' service configuration.
     ADDED = ChangeType.V(1)
+    # The changed object exists in the 'old' service configuration, but not
+    # in the 'new' service configuration.
     REMOVED = ChangeType.V(2)
+    # The changed object exists in both service configurations, but its value
+    # is different.
     MODIFIED = ChangeType.V(3)
 
-class ChangeType(metaclass=_ChangeType):
-    V = typing.NewType("V", builtins.int)
-
+# No value was provided.
 CHANGE_TYPE_UNSPECIFIED = ChangeType.V(0)
+# The changed object exists in the 'new' service configuration, but not
+# in the 'old' service configuration.
 ADDED = ChangeType.V(1)
+# The changed object exists in the 'old' service configuration, but not
+# in the 'new' service configuration.
 REMOVED = ChangeType.V(2)
+# The changed object exists in both service configurations, but its value
+# is different.
 MODIFIED = ChangeType.V(3)
+global___ChangeType = ChangeType
 
+# Output generated from semantically comparing two versions of a service
+# configuration.
+#
+# Includes detailed information about a field that have changed with
+# applicable advice about potential consequences for the change, such as
+# backwards-incompatibility.
 class ConfigChange(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ELEMENT_FIELD_NUMBER: builtins.int
@@ -39,10 +63,26 @@ class ConfigChange(google.protobuf.message.Message):
     NEW_VALUE_FIELD_NUMBER: builtins.int
     CHANGE_TYPE_FIELD_NUMBER: builtins.int
     ADVICES_FIELD_NUMBER: builtins.int
+    # Object hierarchy path to the change, with levels separated by a '.'
+    # character. For repeated fields, an applicable unique identifier field is
+    # used for the index (usually selector, name, or id). For maps, the term
+    # 'key' is used. If the field has no unique identifier, the numeric index
+    # is used.
+    # Examples:
+    # - visibility.rules[selector=="google.LibraryService.CreateBook"].restriction
+    # - quota.metric_rules[selector=="google"].metric_costs[key=="reads"].value
+    # - logging.producer_destinations[0]
     element: typing.Text = ...
+    # Value of the changed object in the old Service configuration,
+    # in JSON format. This field will not be populated if ChangeType == ADDED.
     old_value: typing.Text = ...
+    # Value of the changed object in the new Service configuration,
+    # in JSON format. This field will not be populated if ChangeType == REMOVED.
     new_value: typing.Text = ...
+    # The type for this change, either ADDED, REMOVED, or MODIFIED.
     change_type: global___ChangeType.V = ...
+    # Collection of advice provided for this change, useful for determining the
+    # possible impact of this change.
     @property
     def advices(
         self,
@@ -76,9 +116,13 @@ class ConfigChange(google.protobuf.message.Message):
 
 global___ConfigChange = ConfigChange
 
+# Generated advice about this change, used for providing more
+# information about how a change will affect the existing service.
 class Advice(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     DESCRIPTION_FIELD_NUMBER: builtins.int
+    # Useful description for why this advice was applied and what actions should
+    # be taken to mitigate any implied risks.
     description: typing.Text = ...
     def __init__(
         self,

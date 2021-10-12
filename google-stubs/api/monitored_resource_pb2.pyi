@@ -13,6 +13,15 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# An object that describes the schema of a [MonitoredResource][google.api.MonitoredResource] object using a
+# type name and a set of labels.  For example, the monitored resource
+# descriptor for Google Compute Engine VM instances has a type of
+# `"gce_instance"` and specifies the use of the labels `"instance_id"` and
+# `"zone"` to identify particular VM instances.
+#
+# Different APIs can support different monitored resource types. APIs generally
+# provide a `list` method that returns the monitored resource descriptors used
+# by the API.
 class MonitoredResourceDescriptor(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     NAME_FIELD_NUMBER: builtins.int
@@ -20,10 +29,28 @@ class MonitoredResourceDescriptor(google.protobuf.message.Message):
     DISPLAY_NAME_FIELD_NUMBER: builtins.int
     DESCRIPTION_FIELD_NUMBER: builtins.int
     LABELS_FIELD_NUMBER: builtins.int
+    # Optional. The resource name of the monitored resource descriptor:
+    # `"projects/{project_id}/monitoredResourceDescriptors/{type}"` where
+    # {type} is the value of the `type` field in this object and
+    # {project_id} is a project ID that provides API-specific context for
+    # accessing the type.  APIs that do not use project information can use the
+    # resource name format `"monitoredResourceDescriptors/{type}"`.
     name: typing.Text = ...
+    # Required. The monitored resource type. For example, the type
+    # `"cloudsql_database"` represents databases in Google Cloud SQL.
+    # The maximum length of this value is 256 characters.
     type: typing.Text = ...
+    # Optional. A concise name for the monitored resource type that might be
+    # displayed in user interfaces. It should be a Title Cased Noun Phrase,
+    # without any article or other determiners. For example,
+    # `"Google Cloud SQL Database"`.
     display_name: typing.Text = ...
+    # Optional. A detailed description of the monitored resource type that might
+    # be used in documentation.
     description: typing.Text = ...
+    # Required. A set of labels used to describe instances of this monitored
+    # resource type. For example, an individual Google Cloud SQL database is
+    # identified by values for the labels `"database_id"` and `"zone"`.
     @property
     def labels(
         self,
@@ -59,6 +86,19 @@ class MonitoredResourceDescriptor(google.protobuf.message.Message):
 
 global___MonitoredResourceDescriptor = MonitoredResourceDescriptor
 
+# An object representing a resource that can be used for monitoring, logging,
+# billing, or other purposes. Examples include virtual machine instances,
+# databases, and storage devices such as disks. The `type` field identifies a
+# [MonitoredResourceDescriptor][google.api.MonitoredResourceDescriptor] object that describes the resource's
+# schema. Information in the `labels` field identifies the actual resource and
+# its attributes according to the schema. For example, a particular Compute
+# Engine VM instance could be represented by the following object, because the
+# [MonitoredResourceDescriptor][google.api.MonitoredResourceDescriptor] for `"gce_instance"` has labels
+# `"instance_id"` and `"zone"`:
+#
+#     { "type": "gce_instance",
+#       "labels": { "instance_id": "12345678901234",
+#                   "zone": "us-central1-a" }}
 class MonitoredResource(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class LabelsEntry(google.protobuf.message.Message):
@@ -79,7 +119,13 @@ class MonitoredResource(google.protobuf.message.Message):
         ) -> None: ...
     TYPE_FIELD_NUMBER: builtins.int
     LABELS_FIELD_NUMBER: builtins.int
+    # Required. The monitored resource type. This field must match
+    # the `type` field of a [MonitoredResourceDescriptor][google.api.MonitoredResourceDescriptor] object. For
+    # example, the type of a Compute Engine VM instance is `gce_instance`.
     type: typing.Text = ...
+    # Required. Values for all of the labels listed in the associated monitored
+    # resource descriptor. For example, Compute Engine VM instances use the
+    # labels `"project_id"`, `"instance_id"`, and `"zone"`.
     @property
     def labels(
         self,
@@ -97,6 +143,12 @@ class MonitoredResource(google.protobuf.message.Message):
 
 global___MonitoredResource = MonitoredResource
 
+# Auxiliary metadata for a [MonitoredResource][google.api.MonitoredResource] object.
+# [MonitoredResource][google.api.MonitoredResource] objects contain the minimum set of information to
+# uniquely identify a monitored resource instance. There is some other useful
+# auxiliary metadata. Google Stackdriver Monitoring & Logging uses an ingestion
+# pipeline to extract metadata for cloud resources of all types , and stores
+# the metadata in this message.
 class MonitoredResourceMetadata(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class UserLabelsEntry(google.protobuf.message.Message):
@@ -117,8 +169,20 @@ class MonitoredResourceMetadata(google.protobuf.message.Message):
         ) -> None: ...
     SYSTEM_LABELS_FIELD_NUMBER: builtins.int
     USER_LABELS_FIELD_NUMBER: builtins.int
+    # Output only. Values for predefined system metadata labels.
+    # System labels are a kind of metadata extracted by Google Stackdriver.
+    # Stackdriver determines what system labels are useful and how to obtain
+    # their values. Some examples: "machine_image", "vpc", "subnet_id",
+    # "security_group", "name", etc.
+    # System label values can be only strings, Boolean values, or a list of
+    # strings. For example:
+    #
+    #     { "name": "my-test-instance",
+    #       "security_group": ["a", "b", "c"],
+    #       "spot_instance": false }
     @property
     def system_labels(self) -> google.protobuf.struct_pb2.Struct: ...
+    # Output only. A map of user-defined metadata labels.
     @property
     def user_labels(
         self,

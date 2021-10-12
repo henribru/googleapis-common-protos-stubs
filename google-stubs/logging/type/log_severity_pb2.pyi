@@ -9,32 +9,69 @@ import typing
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
-global___LogSeverity = LogSeverity
+# The severity of the event described in a log entry, expressed as one of the
+# standard severity levels listed below.  For your reference, the levels are
+# assigned the listed numeric values. The effect of using numeric values other
+# than those listed is undefined.
+#
+# You can filter for log entries by severity.  For example, the following
+# filter expression will match log entries with severities `INFO`, `NOTICE`,
+# and `WARNING`:
+#
+#     severity > DEBUG AND severity <= WARNING
+#
+# If you are writing log entries, you should map other severity encodings to
+# one of these standard levels. For example, you might map all of Java's FINE,
+# FINER, and FINEST levels to `LogSeverity.DEBUG`. You can preserve the
+# original severity level in the log entry payload if you wish.
+class LogSeverity(_LogSeverity, metaclass=_LogSeverityEnumTypeWrapper):
+    pass
 
-class _LogSeverity(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[LogSeverity.V],
+class _LogSeverity:
+    V = typing.NewType("V", builtins.int)
+
+class _LogSeverityEnumTypeWrapper(
+    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_LogSeverity.V],
     builtins.type,
 ):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+    # (0) The log entry has no assigned severity level.
     DEFAULT = LogSeverity.V(0)
+    # (100) Debug or trace information.
     DEBUG = LogSeverity.V(100)
+    # (200) Routine information, such as ongoing status or performance.
     INFO = LogSeverity.V(200)
+    # (300) Normal but significant events, such as start up, shut down, or
+    # a configuration change.
     NOTICE = LogSeverity.V(300)
+    # (400) Warning events might cause problems.
     WARNING = LogSeverity.V(400)
+    # (500) Error events are likely to cause problems.
     ERROR = LogSeverity.V(500)
+    # (600) Critical events cause more severe problems or outages.
     CRITICAL = LogSeverity.V(600)
+    # (700) A person must take an action immediately.
     ALERT = LogSeverity.V(700)
+    # (800) One or more systems are unusable.
     EMERGENCY = LogSeverity.V(800)
 
-class LogSeverity(metaclass=_LogSeverity):
-    V = typing.NewType("V", builtins.int)
-
+# (0) The log entry has no assigned severity level.
 DEFAULT = LogSeverity.V(0)
+# (100) Debug or trace information.
 DEBUG = LogSeverity.V(100)
+# (200) Routine information, such as ongoing status or performance.
 INFO = LogSeverity.V(200)
+# (300) Normal but significant events, such as start up, shut down, or
+# a configuration change.
 NOTICE = LogSeverity.V(300)
+# (400) Warning events might cause problems.
 WARNING = LogSeverity.V(400)
+# (500) Error events are likely to cause problems.
 ERROR = LogSeverity.V(500)
+# (600) Critical events cause more severe problems or outages.
 CRITICAL = LogSeverity.V(600)
+# (700) A person must take an action immediately.
 ALERT = LogSeverity.V(700)
+# (800) One or more systems are unusable.
 EMERGENCY = LogSeverity.V(800)
+global___LogSeverity = LogSeverity

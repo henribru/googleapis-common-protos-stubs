@@ -12,9 +12,26 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# A descriptor for defining project properties for a service. One service may
+# have many consumer projects, and the service may want to behave differently
+# depending on some properties on the project. For example, a project may be
+# associated with a school, or a business, or a government agency, a business
+# type property on the project may affect how a service responds to the client.
+# This descriptor defines which properties are allowed to be set on a project.
+#
+# Example:
+#
+#    project_properties:
+#      properties:
+#      - name: NO_WATERMARK
+##       type: BOOL
+#        description: Allows usage of the API without watermarks.
+#      - name: EXTENDED_TILE_CACHE_PERIOD
+##       type: INT64
 class ProjectProperties(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     PROPERTIES_FIELD_NUMBER: builtins.int
+    # List of per consumer project-specific properties.
     @property
     def properties(
         self,
@@ -32,31 +49,57 @@ class ProjectProperties(google.protobuf.message.Message):
 
 global___ProjectProperties = ProjectProperties
 
+# Defines project properties.
+#
+# API services can define properties that can be assigned to consumer projects
+# so that backends can perform response customization without having to make
+# additional calls or maintain additional storage. For example, Maps API
+# defines properties that controls map tile cache period, or whether to embed a
+# watermark in a result.
+#
+# These values can be set via API producer console. Only API providers can
+# define and set these properties.
 class Property(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
-    class _PropertyType(
-        google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[PropertyType.V],
+    # Supported data type of the property values
+    class PropertyType(_PropertyType, metaclass=_PropertyTypeEnumTypeWrapper):
+        pass
+    class _PropertyType:
+        V = typing.NewType("V", builtins.int)
+    class _PropertyTypeEnumTypeWrapper(
+        google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_PropertyType.V],
         builtins.type,
     ):
         DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+        # The type is unspecified, and will result in an error.
         UNSPECIFIED = Property.PropertyType.V(0)
+        # The type is `int64`.
         INT64 = Property.PropertyType.V(1)
+        # The type is `bool`.
         BOOL = Property.PropertyType.V(2)
+        # The type is `string`.
         STRING = Property.PropertyType.V(3)
+        # The type is 'double'.
         DOUBLE = Property.PropertyType.V(4)
-    class PropertyType(metaclass=_PropertyType):
-        V = typing.NewType("V", builtins.int)
+    # The type is unspecified, and will result in an error.
     UNSPECIFIED = Property.PropertyType.V(0)
+    # The type is `int64`.
     INT64 = Property.PropertyType.V(1)
+    # The type is `bool`.
     BOOL = Property.PropertyType.V(2)
+    # The type is `string`.
     STRING = Property.PropertyType.V(3)
+    # The type is 'double'.
     DOUBLE = Property.PropertyType.V(4)
 
     NAME_FIELD_NUMBER: builtins.int
     TYPE_FIELD_NUMBER: builtins.int
     DESCRIPTION_FIELD_NUMBER: builtins.int
+    # The name of the property (a.k.a key).
     name: typing.Text = ...
+    # The type of this property.
     type: global___Property.PropertyType.V = ...
+    # The description of the property
     description: typing.Text = ...
     def __init__(
         self,

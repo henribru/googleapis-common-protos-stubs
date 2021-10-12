@@ -13,8 +13,29 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# This message defines the standard attribute vocabulary for Google APIs.
+#
+# An attribute is a piece of metadata that describes an activity on a network
+# service. For example, the size of an HTTP request, or the status code of
+# an HTTP response.
+#
+# Each attribute has a type and a name, which is logically defined as
+# a proto message field in `AttributeContext`. The field type becomes the
+# attribute type, and the field path becomes the attribute name. For example,
+# the attribute `source.ip` maps to field `AttributeContext.source.ip`.
+#
+# This message definition is guaranteed not to have any wire breaking change.
+# So you can use it directly for passing attributes across different systems.
+#
+# NOTE: Different system may generate different subset of attributes. Please
+# verify the system specification before relying on an attribute generated
+# a system.
 class AttributeContext(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    # This message defines attributes for a node that handles a network request.
+    # The node can be either a service or an application that sends, forwards,
+    # or receives the request. Service peers should fill in
+    # `principal` and `labels` as appropriate.
     class Peer(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         class LabelsEntry(google.protobuf.message.Message):
@@ -38,16 +59,25 @@ class AttributeContext(google.protobuf.message.Message):
         LABELS_FIELD_NUMBER: builtins.int
         PRINCIPAL_FIELD_NUMBER: builtins.int
         REGION_CODE_FIELD_NUMBER: builtins.int
+        # The IP address of the peer.
         ip: typing.Text = ...
+        # The network port of the peer.
         port: builtins.int = ...
-        principal: typing.Text = ...
-        region_code: typing.Text = ...
+        # The labels associated with the peer.
         @property
         def labels(
             self,
         ) -> google.protobuf.internal.containers.ScalarMap[
             typing.Text, typing.Text
         ]: ...
+        # The identity of this peer. Similar to `Request.auth.principal`, but
+        # relative to the peer instead of the request. For example, the
+        # idenity associated with a load balancer that forwared the request.
+        principal: typing.Text = ...
+        # The CLDR country/region code associated with the above IP address.
+        # If the IP address is private, the `region_code` should reflect the
+        # physical location where this peer is running.
+        region_code: typing.Text = ...
         def __init__(
             self,
             *,
@@ -72,15 +102,28 @@ class AttributeContext(google.protobuf.message.Message):
                 b"region_code",
             ],
         ) -> None: ...
+    # This message defines attributes associated with API operations, such as
+    # a network API request. The terminology is based on the conventions used
+    # by Google APIs, Istio, and OpenAPI.
     class Api(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         SERVICE_FIELD_NUMBER: builtins.int
         OPERATION_FIELD_NUMBER: builtins.int
         PROTOCOL_FIELD_NUMBER: builtins.int
         VERSION_FIELD_NUMBER: builtins.int
+        # The API service name. It is a logical identifier for a networked API,
+        # such as "pubsub.googleapis.com". The naming syntax depends on the
+        # API management system being used for handling the request.
         service: typing.Text = ...
+        # The API operation name. For gRPC requests, it is the fully qualified API
+        # method name, such as "google.pubsub.v1.Publisher.Publish". For OpenAPI
+        # requests, it is the `operationId`, such as "getPet".
         operation: typing.Text = ...
+        # The API protocol used for sending the request, such as "http", "https",
+        # "grpc", or "internal".
         protocol: typing.Text = ...
+        # The API version associated with the API operation above, such as "v1" or
+        # "v1alpha1".
         version: typing.Text = ...
         def __init__(
             self,
@@ -103,6 +146,9 @@ class AttributeContext(google.protobuf.message.Message):
                 b"version",
             ],
         ) -> None: ...
+    # This message defines request authentication attributes. Terminology is
+    # based on the JSON Web Token (JWT) standard, but the terms also
+    # correlate to concepts in other standards.
     class Auth(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         PRINCIPAL_FIELD_NUMBER: builtins.int
@@ -110,16 +156,67 @@ class AttributeContext(google.protobuf.message.Message):
         PRESENTER_FIELD_NUMBER: builtins.int
         CLAIMS_FIELD_NUMBER: builtins.int
         ACCESS_LEVELS_FIELD_NUMBER: builtins.int
+        # The authenticated principal. Reflects the issuer (`iss`) and subject
+        # (`sub`) claims within a JWT. The issuer and subject should be `/`
+        # delimited, with `/` percent-encoded within the subject fragment. For
+        # Google accounts, the principal format is:
+        # "https://accounts.google.com/{id}"
         principal: typing.Text = ...
-        audiences: google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+        # The intended audience(s) for this authentication information. Reflects
+        # the audience (`aud`) claim within a JWT. The audience
+        # value(s) depends on the `issuer`, but typically include one or more of
+        # the following pieces of information:
+        #
+        # *  The services intended to receive the credential such as
+        #    ["pubsub.googleapis.com", "storage.googleapis.com"]
+        # *  A set of service-based scopes. For example,
+        #    ["https://www.googleapis.com/auth/cloud-platform"]
+        # *  The client id of an app, such as the Firebase project id for JWTs
+        #    from Firebase Auth.
+        #
+        # Consult the documentation for the credential issuer to determine the
+        # information provided.
+        @property
+        def audiences(
+            self,
+        ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
             typing.Text
-        ] = ...
+        ]: ...
+        # The authorized presenter of the credential. Reflects the optional
+        # Authorized Presenter (`azp`) claim within a JWT or the
+        # OAuth client id. For example, a Google Cloud Platform client id looks
+        # as follows: "123456789012.apps.googleusercontent.com".
         presenter: typing.Text = ...
-        access_levels: google.protobuf.internal.containers.RepeatedScalarFieldContainer[
-            typing.Text
-        ] = ...
+        # Structured claims presented with the credential. JWTs include
+        # `{key: value}` pairs for standard and private claims. The following
+        # is a subset of the standard required and optional claims that would
+        # typically be presented for a Google-based JWT:
+        #
+        #    {'iss': 'accounts.google.com',
+        #     'sub': '113289723416554971153',
+        #     'aud': ['123456789012', 'pubsub.googleapis.com'],
+        #     'azp': '123456789012.apps.googleusercontent.com',
+        #     'email': 'jsmith@example.com',
+        #     'iat': 1353601026,
+        #     'exp': 1353604926}
+        #
+        # SAML assertions are similarly specified, but with an identity provider
+        # dependent structure.
         @property
         def claims(self) -> google.protobuf.struct_pb2.Struct: ...
+        # A list of access level resource names that allow resources to be
+        # accessed by authenticated requester. It is part of Secure GCP processing
+        # for the incoming request. An access level string has the format:
+        # "//{api_service_name}/accessPolicies/{policy_id}/accessLevels/{short_name}"
+        #
+        # Example:
+        # "//accesscontextmanager.googleapis.com/accessPolicies/MY_POLICY_ID/accessLevels/MY_LEVEL"
+        @property
+        def access_levels(
+            self,
+        ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+            typing.Text
+        ]: ...
         def __init__(
             self,
             *,
@@ -147,6 +244,9 @@ class AttributeContext(google.protobuf.message.Message):
                 b"principal",
             ],
         ) -> None: ...
+    # This message defines attributes for an HTTP request. If the actual
+    # request is not an HTTP request, the runtime system should try to map
+    # the actual request to an equivalent HTTP request.
     class Request(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         class HeadersEntry(google.protobuf.message.Message):
@@ -177,23 +277,46 @@ class AttributeContext(google.protobuf.message.Message):
         PROTOCOL_FIELD_NUMBER: builtins.int
         REASON_FIELD_NUMBER: builtins.int
         AUTH_FIELD_NUMBER: builtins.int
+        # The unique ID for a request, which can be propagated to downstream
+        # systems. The ID should have low probability of collision
+        # within a single day for a specific service.
         id: typing.Text = ...
+        # The HTTP request method, such as `GET`, `POST`.
         method: typing.Text = ...
-        path: typing.Text = ...
-        host: typing.Text = ...
-        scheme: typing.Text = ...
-        query: typing.Text = ...
-        size: builtins.int = ...
-        protocol: typing.Text = ...
-        reason: typing.Text = ...
+        # The HTTP request headers. If multiple headers share the same key, they
+        # must be merged according to the HTTP spec. All header keys must be
+        # lowercased, because HTTP header keys are case-insensitive.
         @property
         def headers(
             self,
         ) -> google.protobuf.internal.containers.ScalarMap[
             typing.Text, typing.Text
         ]: ...
+        # The HTTP URL path.
+        path: typing.Text = ...
+        # The HTTP request `Host` header value.
+        host: typing.Text = ...
+        # The HTTP URL scheme, such as `http` and `https`.
+        scheme: typing.Text = ...
+        # The HTTP URL query in the format of `name1=value1&name2=value2`, as it
+        # appears in the first line of the HTTP request. No decoding is performed.
+        query: typing.Text = ...
+        # The timestamp when the `destination` service receives the first byte of
+        # the request.
         @property
         def time(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
+        # The HTTP request size in bytes. If unknown, it must be -1.
+        size: builtins.int = ...
+        # The network protocol used with the request, such as "http/1.1",
+        # "spdy/3", "h2", "h2c", "webrtc", "tcp", "udp", "quic". See
+        # https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids
+        # for details.
+        protocol: typing.Text = ...
+        # A special parameter for request reason. It is used by security systems
+        # to associate auditing information with a request.
+        reason: typing.Text = ...
+        # The request authentication. May be absent for unauthenticated requests.
+        # Derived from the HTTP request `Authorization` header or equivalent.
         @property
         def auth(self) -> global___AttributeContext.Auth: ...
         def __init__(
@@ -245,6 +368,8 @@ class AttributeContext(google.protobuf.message.Message):
                 b"time",
             ],
         ) -> None: ...
+    # This message defines attributes for a typical network response. It
+    # generally models semantics of an HTTP response.
     class Response(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         class HeadersEntry(google.protobuf.message.Message):
@@ -267,14 +392,21 @@ class AttributeContext(google.protobuf.message.Message):
         SIZE_FIELD_NUMBER: builtins.int
         HEADERS_FIELD_NUMBER: builtins.int
         TIME_FIELD_NUMBER: builtins.int
+        # The HTTP response status code, such as `200` and `404`.
         code: builtins.int = ...
+        # The HTTP response size in bytes. If unknown, it must be -1.
         size: builtins.int = ...
+        # The HTTP response headers. If multiple headers share the same key, they
+        # must be merged according to HTTP spec. All header keys must be
+        # lowercased, because HTTP header keys are case-insensitive.
         @property
         def headers(
             self,
         ) -> google.protobuf.internal.containers.ScalarMap[
             typing.Text, typing.Text
         ]: ...
+        # The timestamp when the `destination` service generates the first byte of
+        # the response.
         @property
         def time(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
         def __init__(
@@ -294,6 +426,9 @@ class AttributeContext(google.protobuf.message.Message):
                 "code", b"code", "headers", b"headers", "size", b"size", "time", b"time"
             ],
         ) -> None: ...
+    # This message defines core attributes for a resource. A resource is an
+    # addressable (named) entity provided by the destination service. For
+    # example, a file stored on a network storage service.
     class Resource(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         class LabelsEntry(google.protobuf.message.Message):
@@ -316,9 +451,30 @@ class AttributeContext(google.protobuf.message.Message):
         NAME_FIELD_NUMBER: builtins.int
         TYPE_FIELD_NUMBER: builtins.int
         LABELS_FIELD_NUMBER: builtins.int
+        # The name of the service that this resource belongs to, such as
+        # `pubsub.googleapis.com`. The service may be different from the DNS
+        # hostname that actually serves the request.
         service: typing.Text = ...
+        # The stable identifier (name) of a resource on the `service`. A resource
+        # can be logically identified as "//{resource.service}/{resource.name}".
+        # The differences between a resource name and a URI are:
+        #
+        # *   Resource name is a logical identifier, independent of network
+        #     protocol and API version. For example,
+        #     `//pubsub.googleapis.com/projects/123/topics/news-feed`.
+        # *   URI often includes protocol and version information, so it can
+        #     be used directly by applications. For example,
+        #     `https://pubsub.googleapis.com/v1/projects/123/topics/news-feed`.
+        #
+        # See https://cloud.google.com/apis/design/resource_names for details.
         name: typing.Text = ...
+        # The type of the resource. The syntax is platform-specific because
+        # different platforms define their resources differently.
+        #
+        # For Google APIs, the type format must be "{service}/{kind}".
         type: typing.Text = ...
+        # The labels or tags on the resource, such as AWS resource tags and
+        # Kubernetes resource labels.
         @property
         def labels(
             self,
@@ -353,18 +509,33 @@ class AttributeContext(google.protobuf.message.Message):
     RESPONSE_FIELD_NUMBER: builtins.int
     RESOURCE_FIELD_NUMBER: builtins.int
     API_FIELD_NUMBER: builtins.int
+    # The origin of a network activity. In a multi hop network activity,
+    # the origin represents the sender of the first hop. For the first hop,
+    # the `source` and the `origin` must have the same content.
     @property
     def origin(self) -> global___AttributeContext.Peer: ...
+    # The source of a network activity, such as starting a TCP connection.
+    # In a multi hop network activity, the source represents the sender of the
+    # last hop.
     @property
     def source(self) -> global___AttributeContext.Peer: ...
+    # The destination of a network activity, such as accepting a TCP connection.
+    # In a multi hop network activity, the destination represents the receiver of
+    # the last hop.
     @property
     def destination(self) -> global___AttributeContext.Peer: ...
+    # Represents a network request, such as an HTTP request.
     @property
     def request(self) -> global___AttributeContext.Request: ...
+    # Represents a network response, such as an HTTP response.
     @property
     def response(self) -> global___AttributeContext.Response: ...
+    # Represents a target resource that is involved with a network activity.
+    # If multiple resources are involved with an activity, this must be the
+    # primary one.
     @property
     def resource(self) -> global___AttributeContext.Resource: ...
+    # Represents an API operation that is involved to a network activity.
     @property
     def api(self) -> global___AttributeContext.Api: ...
     def __init__(

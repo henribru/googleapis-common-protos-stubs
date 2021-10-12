@@ -12,9 +12,23 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# Describes when the clients can retry a failed request. Clients could ignore
+# the recommendation here or retry when this information is missing from error
+# responses.
+#
+# It's always recommended that clients should use exponential backoff when
+# retrying.
+#
+# Clients should wait until `retry_delay` amount of time has passed since
+# receiving the error response before retrying.  If retrying requests also
+# fail, clients should use an exponential backoff scheme to gradually increase
+# the delay between retries based on `retry_delay`, until either a maximum
+# number of retries have been reached or a maximum retry delay cap has been
+# reached.
 class RetryInfo(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     RETRY_DELAY_FIELD_NUMBER: builtins.int
+    # Clients should wait at least this long between retrying the same request.
     @property
     def retry_delay(self) -> google.protobuf.duration_pb2.Duration: ...
     def __init__(
@@ -31,13 +45,19 @@ class RetryInfo(google.protobuf.message.Message):
 
 global___RetryInfo = RetryInfo
 
+# Describes additional debugging info.
 class DebugInfo(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     STACK_ENTRIES_FIELD_NUMBER: builtins.int
     DETAIL_FIELD_NUMBER: builtins.int
-    stack_entries: google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+    # The stack trace entries indicating where the error occurred.
+    @property
+    def stack_entries(
+        self,
+    ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
         typing.Text
-    ] = ...
+    ]: ...
+    # Additional debugging information provided by the server.
     detail: typing.Text = ...
     def __init__(
         self,
@@ -54,13 +74,36 @@ class DebugInfo(google.protobuf.message.Message):
 
 global___DebugInfo = DebugInfo
 
+# Describes how a quota check failed.
+#
+# For example if a daily limit was exceeded for the calling project,
+# a service could respond with a QuotaFailure detail containing the project
+# id and the description of the quota limit that was exceeded.  If the
+# calling project hasn't enabled the service in the developer console, then
+# a service could respond with the project id and set `service_disabled`
+# to true.
+#
+# Also see RetryInfo and Help types for other details about handling a
+# quota failure.
 class QuotaFailure(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    # A message type used to describe a single quota violation.  For example, a
+    # daily quota or a custom quota that was exceeded.
     class Violation(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         SUBJECT_FIELD_NUMBER: builtins.int
         DESCRIPTION_FIELD_NUMBER: builtins.int
+        # The subject on which the quota check failed.
+        # For example, "clientip:<ip address of client>" or "project:<Google
+        # developer project id>".
         subject: typing.Text = ...
+        # A description of how the quota check failed. Clients can use this
+        # description to find more about the quota configuration in the service's
+        # public documentation, or find the relevant quota limit to adjust through
+        # developer console.
+        #
+        # For example: "Service disabled" or "Daily Limit for read operations
+        # exceeded".
         description: typing.Text = ...
         def __init__(
             self,
@@ -75,6 +118,7 @@ class QuotaFailure(google.protobuf.message.Message):
             ],
         ) -> None: ...
     VIOLATIONS_FIELD_NUMBER: builtins.int
+    # Describes all quota violations.
     @property
     def violations(
         self,
@@ -94,6 +138,27 @@ class QuotaFailure(google.protobuf.message.Message):
 
 global___QuotaFailure = QuotaFailure
 
+# Describes the cause of the error with structured details.
+#
+# Example of an error when contacting the "pubsub.googleapis.com" API when it
+# is not enabled:
+#     { "reason":   "API_DISABLED"
+#       "domain": "googleapis.com"
+#       "metadata": {
+#         "resource": "projects/123",
+#         "service": "pubsub.googleapis.com"
+#       }
+#     }
+# This response indicates that the pubsub.googleapis.com API is not enabled.
+#
+# Example of an error that is returned when attempting to create a Spanner
+# instance in a region that is out of stock:
+#     { "reason":   "STOCKOUT"
+#       "domain": "spanner.googleapis.com",
+#       "metadata": {
+#         "availableRegions": "us-central1,us-east2"
+#       }
+#     }
 class ErrorInfo(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class MetadataEntry(google.protobuf.message.Message):
@@ -115,8 +180,25 @@ class ErrorInfo(google.protobuf.message.Message):
     REASON_FIELD_NUMBER: builtins.int
     DOMAIN_FIELD_NUMBER: builtins.int
     METADATA_FIELD_NUMBER: builtins.int
+    # The reason of the error. This is a constant value that identifies the
+    # proximate cause of the error. Error reasons are unique within a particular
+    # domain of errors. This should be at most 63 characters and match
+    # /[A-Z0-9_]+/.
     reason: typing.Text = ...
+    # The logical grouping to which the "reason" belongs.  Often "domain" will
+    # contain the registered service name of the tool or product that is the
+    # source of the error. Example: "pubsub.googleapis.com". If the error is
+    # common across many APIs, the first segment of the example above will be
+    # omitted.  The value will be, "googleapis.com".
     domain: typing.Text = ...
+    # Additional structured details about this error.
+    #
+    # Keys should match /[a-zA-Z0-9-_]/ and be limited to 64 characters in
+    # length. When identifying the current value of an exceeded limit, the units
+    # should be contained in the key, not the value.  For example, rather than
+    # {"instanceLimit": "100/request"}, should be returned as,
+    # {"instanceLimitPerRequest": "100"}, if the client exceeds the number of
+    # instances that can be created in a single (batch) request.
     @property
     def metadata(
         self,
@@ -137,15 +219,31 @@ class ErrorInfo(google.protobuf.message.Message):
 
 global___ErrorInfo = ErrorInfo
 
+# Describes what preconditions have failed.
+#
+# For example, if an RPC failed because it required the Terms of Service to be
+# acknowledged, it could list the terms of service violation in the
+# PreconditionFailure message.
 class PreconditionFailure(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    # A message type used to describe a single precondition failure.
     class Violation(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         TYPE_FIELD_NUMBER: builtins.int
         SUBJECT_FIELD_NUMBER: builtins.int
         DESCRIPTION_FIELD_NUMBER: builtins.int
+        # The type of PreconditionFailure. We recommend using a service-specific
+        # enum type to define the supported precondition violation subjects. For
+        # example, "TOS" for "Terms of Service violation".
         type: typing.Text = ...
+        # The subject, relative to the type, that failed.
+        # For example, "google.com/cloud" relative to the "TOS" type would indicate
+        # which terms of service is being referenced.
         subject: typing.Text = ...
+        # A description of how the precondition failed. Developers can use this
+        # description to understand how to fix the failure.
+        #
+        # For example: "Terms of service not accepted".
         description: typing.Text = ...
         def __init__(
             self,
@@ -161,6 +259,7 @@ class PreconditionFailure(google.protobuf.message.Message):
             ],
         ) -> None: ...
     VIOLATIONS_FIELD_NUMBER: builtins.int
+    # Describes all precondition violations.
     @property
     def violations(
         self,
@@ -180,13 +279,20 @@ class PreconditionFailure(google.protobuf.message.Message):
 
 global___PreconditionFailure = PreconditionFailure
 
+# Describes violations in a client request. This error type focuses on the
+# syntactic aspects of the request.
 class BadRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    # A message type used to describe a single bad request field.
     class FieldViolation(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         FIELD_FIELD_NUMBER: builtins.int
         DESCRIPTION_FIELD_NUMBER: builtins.int
+        # A path leading to a field in the request body. The value will be a
+        # sequence of dot-separated identifiers that identify a protocol buffer
+        # field. E.g., "field_violations.field" would identify this field.
         field: typing.Text = ...
+        # A description of why the request element is bad.
         description: typing.Text = ...
         def __init__(
             self,
@@ -201,6 +307,7 @@ class BadRequest(google.protobuf.message.Message):
             ],
         ) -> None: ...
     FIELD_VIOLATIONS_FIELD_NUMBER: builtins.int
+    # Describes all violations in a client request.
     @property
     def field_violations(
         self,
@@ -221,11 +328,17 @@ class BadRequest(google.protobuf.message.Message):
 
 global___BadRequest = BadRequest
 
+# Contains metadata about the request that clients can attach when filing a bug
+# or providing other forms of feedback.
 class RequestInfo(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     REQUEST_ID_FIELD_NUMBER: builtins.int
     SERVING_DATA_FIELD_NUMBER: builtins.int
+    # An opaque string that should only be interpreted by the service generating
+    # it. For example, it can be used to identify requests in the service's logs.
     request_id: typing.Text = ...
+    # Any data that was used to serve this request. For example, an encrypted
+    # stack trace that can be sent back to the service provider for debugging.
     serving_data: typing.Text = ...
     def __init__(
         self,
@@ -242,15 +355,28 @@ class RequestInfo(google.protobuf.message.Message):
 
 global___RequestInfo = RequestInfo
 
+# Describes the resource that is being accessed.
 class ResourceInfo(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     RESOURCE_TYPE_FIELD_NUMBER: builtins.int
     RESOURCE_NAME_FIELD_NUMBER: builtins.int
     OWNER_FIELD_NUMBER: builtins.int
     DESCRIPTION_FIELD_NUMBER: builtins.int
+    # A name for the type of resource being accessed, e.g. "sql table",
+    # "cloud storage bucket", "file", "Google calendar"; or the type URL
+    # of the resource: e.g. "type.googleapis.com/google.pubsub.v1.Topic".
     resource_type: typing.Text = ...
+    # The name of the resource being accessed.  For example, a shared calendar
+    # name: "example.com_4fghdhgsrgh@group.calendar.google.com", if the current
+    # error is [google.rpc.Code.PERMISSION_DENIED][google.rpc.Code.PERMISSION_DENIED].
     resource_name: typing.Text = ...
+    # The owner of the resource (optional).
+    # For example, "user:<owner email>" or "project:<Google developer project
+    # id>".
     owner: typing.Text = ...
+    # Describes what error is encountered when accessing this resource.
+    # For example, updating a cloud project may require the `writer` permission
+    # on the developer console project.
     description: typing.Text = ...
     def __init__(
         self,
@@ -276,13 +402,21 @@ class ResourceInfo(google.protobuf.message.Message):
 
 global___ResourceInfo = ResourceInfo
 
+# Provides links to documentation or for performing an out of band action.
+#
+# For example, if a quota check failed with an error indicating the calling
+# project hasn't enabled the accessed service, this can contain a URL pointing
+# directly to the right place in the developer console to flip the bit.
 class Help(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    # Describes a URL link.
     class Link(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         DESCRIPTION_FIELD_NUMBER: builtins.int
         URL_FIELD_NUMBER: builtins.int
+        # Describes what the link offers.
         description: typing.Text = ...
+        # The URL of the link.
         url: typing.Text = ...
         def __init__(
             self,
@@ -297,6 +431,7 @@ class Help(google.protobuf.message.Message):
             ],
         ) -> None: ...
     LINKS_FIELD_NUMBER: builtins.int
+    # URL(s) pointing to additional information on handling the current error.
     @property
     def links(
         self,
@@ -314,11 +449,17 @@ class Help(google.protobuf.message.Message):
 
 global___Help = Help
 
+# Provides a localized error message that is safe to return to the user
+# which can be attached to an RPC error.
 class LocalizedMessage(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     LOCALE_FIELD_NUMBER: builtins.int
     MESSAGE_FIELD_NUMBER: builtins.int
+    # The locale used following the specification defined at
+    # http://www.rfc-editor.org/rfc/bcp/bcp47.txt.
+    # Examples are: "en-US", "fr-CH", "es-MX"
     locale: typing.Text = ...
+    # The localized error message in the above locale.
     message: typing.Text = ...
     def __init__(
         self,

@@ -9,30 +9,59 @@ import typing
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
-global___CalendarPeriod = CalendarPeriod
+# A `CalendarPeriod` represents the abstract concept of a time period that has
+# a canonical start. Grammatically, "the start of the current
+# `CalendarPeriod`." All calendar times begin at midnight UTC.
+class CalendarPeriod(_CalendarPeriod, metaclass=_CalendarPeriodEnumTypeWrapper):
+    pass
 
-class _CalendarPeriod(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[CalendarPeriod.V],
+class _CalendarPeriod:
+    V = typing.NewType("V", builtins.int)
+
+class _CalendarPeriodEnumTypeWrapper(
+    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_CalendarPeriod.V],
     builtins.type,
 ):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+    # Undefined period, raises an error.
     CALENDAR_PERIOD_UNSPECIFIED = CalendarPeriod.V(0)
+    # A day.
     DAY = CalendarPeriod.V(1)
+    # A week. Weeks begin on Monday, following
+    # [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date).
     WEEK = CalendarPeriod.V(2)
+    # A fortnight. The first calendar fortnight of the year begins at the start
+    # of week 1 according to
+    # [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date).
     FORTNIGHT = CalendarPeriod.V(3)
+    # A month.
     MONTH = CalendarPeriod.V(4)
+    # A quarter. Quarters start on dates 1-Jan, 1-Apr, 1-Jul, and 1-Oct of each
+    # year.
     QUARTER = CalendarPeriod.V(5)
+    # A half-year. Half-years start on dates 1-Jan and 1-Jul.
     HALF = CalendarPeriod.V(6)
+    # A year.
     YEAR = CalendarPeriod.V(7)
 
-class CalendarPeriod(metaclass=_CalendarPeriod):
-    V = typing.NewType("V", builtins.int)
-
+# Undefined period, raises an error.
 CALENDAR_PERIOD_UNSPECIFIED = CalendarPeriod.V(0)
+# A day.
 DAY = CalendarPeriod.V(1)
+# A week. Weeks begin on Monday, following
+# [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date).
 WEEK = CalendarPeriod.V(2)
+# A fortnight. The first calendar fortnight of the year begins at the start
+# of week 1 according to
+# [ISO 8601](https://en.wikipedia.org/wiki/ISO_week_date).
 FORTNIGHT = CalendarPeriod.V(3)
+# A month.
 MONTH = CalendarPeriod.V(4)
+# A quarter. Quarters start on dates 1-Jan, 1-Apr, 1-Jul, and 1-Oct of each
+# year.
 QUARTER = CalendarPeriod.V(5)
+# A half-year. Half-years start on dates 1-Jan and 1-Jul.
 HALF = CalendarPeriod.V(6)
+# A year.
 YEAR = CalendarPeriod.V(7)
+global___CalendarPeriod = CalendarPeriod

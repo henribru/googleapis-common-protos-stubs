@@ -4,35 +4,105 @@ isort:skip_file
 """
 import builtins
 import google.protobuf.descriptor
+import google.protobuf.descriptor_pb2
+import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
+import google.protobuf.internal.extension_dict
 import typing
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
-global___FieldBehavior = FieldBehavior
+# An indicator of the behavior of a given field (for example, that a field
+# is required in requests, or given as output but ignored as input).
+# This **does not** change the behavior in protocol buffers itself; it only
+# denotes the behavior and may affect how API tooling handles the field.
+#
+# Note: This enum **may** receive new values in the future.
+class FieldBehavior(_FieldBehavior, metaclass=_FieldBehaviorEnumTypeWrapper):
+    pass
 
-class _FieldBehavior(
-    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[FieldBehavior.V],
+class _FieldBehavior:
+    V = typing.NewType("V", builtins.int)
+
+class _FieldBehaviorEnumTypeWrapper(
+    google.protobuf.internal.enum_type_wrapper._EnumTypeWrapper[_FieldBehavior.V],
     builtins.type,
 ):
     DESCRIPTOR: google.protobuf.descriptor.EnumDescriptor = ...
+    # Conventional default for enums. Do not use this.
     FIELD_BEHAVIOR_UNSPECIFIED = FieldBehavior.V(0)
+    # Specifically denotes a field as optional.
+    # While all fields in protocol buffers are optional, this may be specified
+    # for emphasis if appropriate.
     OPTIONAL = FieldBehavior.V(1)
+    # Denotes a field as required.
+    # This indicates that the field **must** be provided as part of the request,
+    # and failure to do so will cause an error (usually `INVALID_ARGUMENT`).
     REQUIRED = FieldBehavior.V(2)
+    # Denotes a field as output only.
+    # This indicates that the field is provided in responses, but including the
+    # field in a request does nothing (the server *must* ignore it and
+    # *must not* throw an error as a result of the field's presence).
     OUTPUT_ONLY = FieldBehavior.V(3)
+    # Denotes a field as input only.
+    # This indicates that the field is provided in requests, and the
+    # corresponding field is not included in output.
     INPUT_ONLY = FieldBehavior.V(4)
+    # Denotes a field as immutable.
+    # This indicates that the field may be set once in a request to create a
+    # resource, but may not be changed thereafter.
     IMMUTABLE = FieldBehavior.V(5)
+    # Denotes that a (repeated) field is an unordered list.
+    # This indicates that the service may provide the elements of the list
+    # in any arbitrary order, rather than the order the user originally
+    # provided. Additionally, the list's order may or may not be stable.
     UNORDERED_LIST = FieldBehavior.V(6)
 
-class FieldBehavior(metaclass=_FieldBehavior):
-    V = typing.NewType("V", builtins.int)
-
+# Conventional default for enums. Do not use this.
 FIELD_BEHAVIOR_UNSPECIFIED = FieldBehavior.V(0)
+# Specifically denotes a field as optional.
+# While all fields in protocol buffers are optional, this may be specified
+# for emphasis if appropriate.
 OPTIONAL = FieldBehavior.V(1)
+# Denotes a field as required.
+# This indicates that the field **must** be provided as part of the request,
+# and failure to do so will cause an error (usually `INVALID_ARGUMENT`).
 REQUIRED = FieldBehavior.V(2)
+# Denotes a field as output only.
+# This indicates that the field is provided in responses, but including the
+# field in a request does nothing (the server *must* ignore it and
+# *must not* throw an error as a result of the field's presence).
 OUTPUT_ONLY = FieldBehavior.V(3)
+# Denotes a field as input only.
+# This indicates that the field is provided in requests, and the
+# corresponding field is not included in output.
 INPUT_ONLY = FieldBehavior.V(4)
+# Denotes a field as immutable.
+# This indicates that the field may be set once in a request to create a
+# resource, but may not be changed thereafter.
 IMMUTABLE = FieldBehavior.V(5)
+# Denotes that a (repeated) field is an unordered list.
+# This indicates that the service may provide the elements of the list
+# in any arbitrary order, rather than the order the user originally
+# provided. Additionally, the list's order may or may not be stable.
 UNORDERED_LIST = FieldBehavior.V(6)
+global___FieldBehavior = FieldBehavior
 
-field_behavior: google.protobuf.descriptor.FieldDescriptor = ...
+# A designation of a specific field behavior (required, output only, etc.)
+# in protobuf messages.
+#
+# Examples:
+#
+#   string name = 1 [(google.api.field_behavior) = REQUIRED];
+#   State state = 1 [(google.api.field_behavior) = OUTPUT_ONLY];
+#   google.protobuf.Duration ttl = 1
+#     [(google.api.field_behavior) = INPUT_ONLY];
+#   google.protobuf.Timestamp expire_time = 1
+#     [(google.api.field_behavior) = OUTPUT_ONLY,
+#      (google.api.field_behavior) = IMMUTABLE];
+field_behavior: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[
+    google.protobuf.descriptor_pb2.FieldOptions,
+    google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+        global___FieldBehavior.V
+    ],
+] = ...

@@ -11,16 +11,34 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# `Authentication` defines the authentication configuration for an API.
+#
+# Example for an API targeted for external use:
+#
+#     name: calendar.googleapis.com
+#     authentication:
+#       providers:
+#       - id: google_calendar_auth
+#         jwks_uri: https://www.googleapis.com/oauth2/v1/certs
+#         issuer: https://securetoken.google.com
+#       rules:
+#       - selector: "*"
+#         requirements:
+#           provider_id: google_calendar_auth
 class Authentication(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     RULES_FIELD_NUMBER: builtins.int
     PROVIDERS_FIELD_NUMBER: builtins.int
+    # A list of authentication rules that apply to individual API methods.
+    #
+    # **NOTE:** All service configuration rules follow "last one wins" order.
     @property
     def rules(
         self,
     ) -> google.protobuf.internal.containers.RepeatedCompositeFieldContainer[
         global___AuthenticationRule
     ]: ...
+    # Defines a set of authentication providers that a service supports.
     @property
     def providers(
         self,
@@ -42,16 +60,31 @@ class Authentication(google.protobuf.message.Message):
 
 global___Authentication = Authentication
 
+# Authentication rules for the service.
+#
+# By default, if a method has any authentication requirements, every request
+# must include a valid credential matching one of the requirements.
+# It's an error to include more than one kind of credential in a single
+# request.
+#
+# If a method doesn't have any auth requirements, request credentials will be
+# ignored.
 class AuthenticationRule(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     SELECTOR_FIELD_NUMBER: builtins.int
     OAUTH_FIELD_NUMBER: builtins.int
     ALLOW_WITHOUT_CREDENTIAL_FIELD_NUMBER: builtins.int
     REQUIREMENTS_FIELD_NUMBER: builtins.int
+    # Selects the methods to which this rule applies.
+    #
+    # Refer to [selector][google.api.DocumentationRule.selector] for syntax details.
     selector: typing.Text = ...
-    allow_without_credential: builtins.bool = ...
+    # The requirements for OAuth credentials.
     @property
     def oauth(self) -> global___OAuthRequirements: ...
+    # If true, the service accepts API keys without any other credential.
+    allow_without_credential: builtins.bool = ...
+    # Requirements for additional authentication providers.
     @property
     def requirements(
         self,
@@ -85,6 +118,8 @@ class AuthenticationRule(google.protobuf.message.Message):
 
 global___AuthenticationRule = AuthenticationRule
 
+# Configuration for an anthentication provider, including support for
+# [JSON Web Token (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32).
 class AuthProvider(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     ID_FIELD_NUMBER: builtins.int
@@ -92,10 +127,44 @@ class AuthProvider(google.protobuf.message.Message):
     JWKS_URI_FIELD_NUMBER: builtins.int
     AUDIENCES_FIELD_NUMBER: builtins.int
     AUTHORIZATION_URL_FIELD_NUMBER: builtins.int
+    # The unique identifier of the auth provider. It will be referred to by
+    # `AuthRequirement.provider_id`.
+    #
+    # Example: "bookstore_auth".
     id: typing.Text = ...
+    # Identifies the principal that issued the JWT. See
+    # https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.1
+    # Usually a URL or an email address.
+    #
+    # Example: https://securetoken.google.com
+    # Example: 1234567-compute@developer.gserviceaccount.com
     issuer: typing.Text = ...
+    # URL of the provider's public key set to validate signature of the JWT. See
+    # [OpenID Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata).
+    # Optional if the key set document:
+    #  - can be retrieved from
+    #    [OpenID Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html
+    #    of the issuer.
+    #  - can be inferred from the email domain of the issuer (e.g. a Google service account).
+    #
+    # Example: https://www.googleapis.com/oauth2/v1/certs
     jwks_uri: typing.Text = ...
+    # The list of JWT
+    # [audiences](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.3).
+    # that are allowed to access. A JWT containing any of these audiences will
+    # be accepted. When this setting is absent, only JWTs with audience
+    # "https://[Service_name][google.api.Service.name]/[API_name][google.protobuf.Api.name]"
+    # will be accepted. For example, if no audiences are in the setting,
+    # LibraryService API will only accept JWTs with the following audience
+    # "https://library-example.googleapis.com/google.example.library.v1.LibraryService".
+    #
+    # Example:
+    #
+    #     audiences: bookstore_android.apps.googleusercontent.com,
+    #                bookstore_web.apps.googleusercontent.com
     audiences: typing.Text = ...
+    # Redirect URL if JWT token is required but no present or is expired.
+    # Implement authorizationUrl of securityDefinitions in OpenAPI spec.
     authorization_url: typing.Text = ...
     def __init__(
         self,
@@ -124,9 +193,34 @@ class AuthProvider(google.protobuf.message.Message):
 
 global___AuthProvider = AuthProvider
 
+# OAuth scopes are a way to define data and permissions on data. For example,
+# there are scopes defined for "Read-only access to Google Calendar" and
+# "Access to Cloud Platform". Users can consent to a scope for an application,
+# giving it permission to access that data on their behalf.
+#
+# OAuth scope specifications should be fairly coarse grained; a user will need
+# to see and understand the text description of what your scope means.
+#
+# In most cases: use one or at most two OAuth scopes for an entire family of
+# products. If your product has multiple APIs, you should probably be sharing
+# the OAuth scope across all of those APIs.
+#
+# When you need finer grained OAuth consent screens: talk with your product
+# management about how developers will use them in practice.
+#
+# Please note that even though each of the canonical scopes is enough for a
+# request to be accepted and passed to the backend, a request can still fail
+# due to the backend requiring additional scopes or permissions.
 class OAuthRequirements(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     CANONICAL_SCOPES_FIELD_NUMBER: builtins.int
+    # The list of publicly documented OAuth scopes that are allowed access. An
+    # OAuth token containing any of these scopes will be accepted.
+    #
+    # Example:
+    #
+    #      canonical_scopes: https://www.googleapis.com/auth/calendar,
+    #                        https://www.googleapis.com/auth/calendar.read
     canonical_scopes: typing.Text = ...
     def __init__(
         self,
@@ -140,11 +234,34 @@ class OAuthRequirements(google.protobuf.message.Message):
 
 global___OAuthRequirements = OAuthRequirements
 
+# User-defined authentication requirements, including support for
+# [JSON Web Token (JWT)](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32).
 class AuthRequirement(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     PROVIDER_ID_FIELD_NUMBER: builtins.int
     AUDIENCES_FIELD_NUMBER: builtins.int
+    # [id][google.api.AuthProvider.id] from authentication provider.
+    #
+    # Example:
+    #
+    #     provider_id: bookstore_auth
     provider_id: typing.Text = ...
+    # NOTE: This will be deprecated soon, once AuthProvider.audiences is
+    # implemented and accepted in all the runtime components.
+    #
+    # The list of JWT
+    # [audiences](https://tools.ietf.org/html/draft-ietf-oauth-json-web-token-32#section-4.1.3).
+    # that are allowed to access. A JWT containing any of these audiences will
+    # be accepted. When this setting is absent, only JWTs with audience
+    # "https://[Service_name][google.api.Service.name]/[API_name][google.protobuf.Api.name]"
+    # will be accepted. For example, if no audiences are in the setting,
+    # LibraryService API will only accept JWTs with the following audience
+    # "https://library-example.googleapis.com/google.example.library.v1.LibraryService".
+    #
+    # Example:
+    #
+    #     audiences: bookstore_android.apps.googleusercontent.com,
+    #                bookstore_web.apps.googleusercontent.com
     audiences: typing.Text = ...
     def __init__(
         self,

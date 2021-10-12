@@ -11,16 +11,46 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# Billing related configuration of the service.
+#
+# The following example shows how to configure monitored resources and metrics
+# for billing:
+#
+#     monitored_resources:
+#     - type: library.googleapis.com/branch
+#       labels:
+#       - key: /city
+#         description: The city where the library branch is located in.
+#       - key: /name
+#         description: The name of the branch.
+#     metrics:
+#     - name: library.googleapis.com/book/borrowed_count
+#       metric_kind: DELTA
+#       value_type: INT64
+#     billing:
+#       consumer_destinations:
+#       - monitored_resource: library.googleapis.com/branch
+#         metrics:
+#         - library.googleapis.com/book/borrowed_count
 class Billing(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
+    # Configuration of a specific billing destination (Currently only support
+    # bill against consumer project).
     class BillingDestination(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         MONITORED_RESOURCE_FIELD_NUMBER: builtins.int
         METRICS_FIELD_NUMBER: builtins.int
+        # The monitored resource type. The type must be defined in
+        # [Service.monitored_resources][google.api.Service.monitored_resources] section.
         monitored_resource: typing.Text = ...
-        metrics: google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+        # Names of the metrics to report to this billing destination.
+        # Each name must be defined in [Service.metrics][google.api.Service.metrics] section.
+        @property
+        def metrics(
+            self,
+        ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
             typing.Text
-        ] = ...
+        ]: ...
         def __init__(
             self,
             *,
@@ -34,6 +64,10 @@ class Billing(google.protobuf.message.Message):
             ],
         ) -> None: ...
     CONSUMER_DESTINATIONS_FIELD_NUMBER: builtins.int
+    # Billing configurations for sending metrics to the consumer project.
+    # There can be multiple consumer destinations per service, each one must have
+    # a different monitored resource type. A metric can be used in at most
+    # one consumer destination.
     @property
     def consumer_destinations(
         self,

@@ -11,6 +11,8 @@ import typing_extensions
 
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor = ...
 
+# Metadata about a GAPIC library for a specific combination of API, version, and
+# computer language.
 class GapicMetadata(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
     class ServicesEntry(google.protobuf.message.Message):
@@ -33,6 +35,12 @@ class GapicMetadata(google.protobuf.message.Message):
             self,
             field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
         ) -> None: ...
+    # A map from a transport name to ServiceAsClient, which allows
+    # listing information about the client objects that implement the
+    # parent RPC service for the specified transport.
+    #
+    # The key name is the transport, lower-cased with no separators
+    # (e.g. "grpc", "rest").
     class ServiceForTransport(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         class ClientsEntry(google.protobuf.message.Message):
@@ -72,6 +80,7 @@ class GapicMetadata(google.protobuf.message.Message):
         def ClearField(
             self, field_name: typing_extensions.Literal["clients", b"clients"]
         ) -> None: ...
+    # Information about a specific client implementing a proto-defined service.
     class ServiceAsClient(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         class RpcsEntry(google.protobuf.message.Message):
@@ -96,7 +105,15 @@ class GapicMetadata(google.protobuf.message.Message):
             ) -> None: ...
         LIBRARY_CLIENT_FIELD_NUMBER: builtins.int
         RPCS_FIELD_NUMBER: builtins.int
+        # The name of the library client formatted as it appears in the source code
         library_client: typing.Text = ...
+        # A mapping from each proto-defined RPC name to the the list of
+        # methods in library_client that implement it. There can be more
+        # than one library_client method for each RPC. RPCs with no
+        # library_client methods need not be included.
+        #
+        # The key name is the name of the RPC as defined and formated in
+        # the proto file.
         @property
         def rpcs(
             self,
@@ -117,12 +134,21 @@ class GapicMetadata(google.protobuf.message.Message):
                 "library_client", b"library_client", "rpcs", b"rpcs"
             ],
         ) -> None: ...
+    # List of GAPIC client methods implementing the proto-defined RPC
+    # for the transport and service specified in the containing
+    # structures.
     class MethodList(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor = ...
         METHODS_FIELD_NUMBER: builtins.int
-        methods: google.protobuf.internal.containers.RepeatedScalarFieldContainer[
+        # List of methods for a specific proto-service client in the
+        # GAPIC. These names should be formatted as they appear in the
+        # source code.
+        @property
+        def methods(
+            self,
+        ) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[
             typing.Text
-        ] = ...
+        ]: ...
         def __init__(
             self,
             *,
@@ -137,11 +163,25 @@ class GapicMetadata(google.protobuf.message.Message):
     PROTO_PACKAGE_FIELD_NUMBER: builtins.int
     LIBRARY_PACKAGE_FIELD_NUMBER: builtins.int
     SERVICES_FIELD_NUMBER: builtins.int
+    # Schema version of this proto. Current value: 1.0
     schema: typing.Text = ...
+    # Any human-readable comments to be included in this file.
     comment: typing.Text = ...
+    # Computer language of this generated language. This must be
+    # spelled out as it spoken in English, with no capitalization or
+    # separators (e.g. "csharp", "nodejs").
     language: typing.Text = ...
+    # The proto package containing the API definition for which this
+    # GAPIC library was generated.
     proto_package: typing.Text = ...
+    # The language-specific library package for this GAPIC library.
     library_package: typing.Text = ...
+    # A map from each proto-defined service to ServiceForTransports,
+    # which allows listing information about transport-specific
+    # implementations of the service.
+    #
+    # The key is the name of the service as it appears in the .proto
+    # file.
     @property
     def services(
         self,
