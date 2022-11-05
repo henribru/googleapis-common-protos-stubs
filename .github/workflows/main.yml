@@ -14,6 +14,8 @@ jobs:
 
       - name: Setup Python
         uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
 
       - name: Install Poetry
         run: pip install poetry
@@ -45,6 +47,8 @@ jobs:
 
       - name: Setup Python
         uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
 
       - name: Install Poetry
         run: pip install poetry
@@ -76,6 +80,8 @@ jobs:
 
       - name: Setup Python
         uses: actions/setup-python@v2
+        with:
+          python-version: "3.10"
 
       - name: Install Poetry
         run: pip install poetry
