@@ -28,30 +28,32 @@ else:
 DESCRIPTOR: google.protobuf.descriptor.FileDescriptor
 
 @typing_extensions.final
-class Fraction(google.protobuf.message.Message):
-    """Represents a fraction in terms of a numerator divided by a denominator."""
+class LocalizedText(google.protobuf.message.Message):
+    """Localized variant of a text in a particular language."""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
-    NUMERATOR_FIELD_NUMBER: builtins.int
-    DENOMINATOR_FIELD_NUMBER: builtins.int
-    numerator: builtins.int
-    """The numerator in the fraction, e.g. 2 in 2/3."""
-    denominator: builtins.int
-    """The value by which the numerator is divided, e.g. 3 in 2/3. Must be
-    positive.
+    TEXT_FIELD_NUMBER: builtins.int
+    LANGUAGE_CODE_FIELD_NUMBER: builtins.int
+    text: builtins.str
+    """Localized string in the language corresponding to `language_code' below."""
+    language_code: builtins.str
+    """The text's BCP-47 language code, such as "en-US" or "sr-Latn".
+
+    For more information, see
+    http://www.unicode.org/reports/tr35/#Unicode_locale_identifier.
     """
     def __init__(
         self,
         *,
-        numerator: builtins.int = ...,
-        denominator: builtins.int = ...,
+        text: builtins.str = ...,
+        language_code: builtins.str = ...,
     ) -> None: ...
     def ClearField(
         self,
         field_name: typing_extensions.Literal[
-            "denominator", b"denominator", "numerator", b"numerator"
+            "language_code", b"language_code", "text", b"text"
         ],
     ) -> None: ...
 
-global___Fraction = Fraction
+global___LocalizedText = LocalizedText
