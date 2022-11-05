@@ -14,17 +14,18 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 typing-extensions = ">=3.10.0"
-googleapis-common-protos = ">=1.53.0"
-grpc-stubs = ">=1.24.7"
+googleapis-common-protos = ">=1.56.4"
+grpc-stubs = ">=1.24.9"
+types-protobuf = "^3.20.4.2"
 
 [tool.poetry.dev-dependencies]
-protobuf = "^3.18.1"
-mypy-protobuf = "==2.9"
-isort = { version = "^5.9.3", python = "^3.7" }
-black = { version = "^21.9b0", python = "^3.7" }
-mypy = "^0.910"
+protobuf = "^4.21.9"
+mypy-protobuf = "^3.4.0"
+isort = "^5.10.1"
+black = "^22.10.0"
+mypy = "^0.982"
 
 [tool.isort]
 profile = "black"
