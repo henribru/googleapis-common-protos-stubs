@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import builtins
 import google.protobuf.descriptor
 import google.protobuf.message
@@ -49,6 +50,7 @@ class Interval(google.protobuf.message.Message):
         If specified, a Timestamp matching this interval will have to be the same
         or after the start.
         """
+
     @property
     def end_time(self) -> google.protobuf.timestamp_pb2.Timestamp:
         """Optional. Exclusive end of the interval.
@@ -56,6 +58,7 @@ class Interval(google.protobuf.message.Message):
         If specified, a Timestamp matching this interval will have to be before the
         end.
         """
+
     def __init__(
         self,
         *,

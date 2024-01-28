@@ -20,6 +20,7 @@ handle Long Running Operation methods (LRO) that are NOT compliant with
 https://google.aip.dev/151. These annotations are public for technical
 reasons only. Please DO NOT USE them in your protos.
 """
+
 import builtins
 import google.protobuf.descriptor
 import google.protobuf.descriptor_pb2
@@ -115,9 +116,11 @@ operation_field: google.protobuf.internal.extension_dict._ExtensionFieldDescript
 their standard counterparts in google.longrunning.Operation. See
 OperationResponseMapping enum definition.
 """
-operation_request_field: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[
-    google.protobuf.descriptor_pb2.FieldOptions, builtins.str
-]
+operation_request_field: (
+    google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[
+        google.protobuf.descriptor_pb2.FieldOptions, builtins.str
+    ]
+)
 """A field annotation that maps fields in the initial request message
 (the one which started the LRO) to their counterparts in the polling
 request message. For non-standard LRO, the polling response may be missing
@@ -128,9 +131,11 @@ to. The string value of the annotation corresponds to the name of the
 counterpart field in the polling request message that the annotated field's
 value will be copied to.
 """
-operation_response_field: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[
-    google.protobuf.descriptor_pb2.FieldOptions, builtins.str
-]
+operation_response_field: (
+    google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[
+        google.protobuf.descriptor_pb2.FieldOptions, builtins.str
+    ]
+)
 """A field annotation that maps fields in the polling request message to their
 counterparts in the initial and/or polling response message. The initial
 and the polling methods return an API-specific Operation object. Some of
@@ -150,9 +155,11 @@ annotation must be applied to the method which starts an LRO, the string
 value of the annotation must correspond to the name of the service used to
 poll for the operation status.
 """
-operation_polling_method: google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[
-    google.protobuf.descriptor_pb2.MethodOptions, builtins.bool
-]
+operation_polling_method: (
+    google.protobuf.internal.extension_dict._ExtensionFieldDescriptor[
+        google.protobuf.descriptor_pb2.MethodOptions, builtins.bool
+    ]
+)
 """A method annotation that marks methods that can be used for polling
 operation status (e.g. the MyPollingService.Get(MyPollingRequest) method).
 """

@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import builtins
 import google.protobuf.descriptor
 import google.protobuf.duration_pb2
@@ -98,9 +99,11 @@ class DateTime(google.protobuf.message.Message):
         For example, a UTC offset of -4:00 would be represented as
         { seconds: -14400 }.
         """
+
     @property
     def time_zone(self) -> global___TimeZone:
         """Time zone."""
+
     def __init__(
         self,
         *,

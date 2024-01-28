@@ -15,10 +15,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import abc
+import collections.abc
 import google.longrunning.operations_pb2
 import google.protobuf.empty_pb2
 import grpc
+import grpc.aio
+import typing
+
+_T = typing.TypeVar("_T")
+
+class _MaybeAsyncIterator(
+    collections.abc.AsyncIterator[_T],
+    collections.abc.Iterator[_T],
+    metaclass=abc.ABCMeta,
+): ...
+
+class _ServicerContext(grpc.ServicerContext, grpc.aio.ServicerContext):  # type: ignore
+    ...
 
 class OperationsStub:
     """Manages long-running operations with an API service.
@@ -32,7 +47,9 @@ class OperationsStub:
     so developers can have a consistent client experience.
     """
 
-    def __init__(self, channel: grpc.Channel) -> None: ...
+    def __init__(
+        self, channel: typing.Union[grpc.Channel, grpc.aio.Channel]
+    ) -> None: ...
     ListOperations: grpc.UnaryUnaryMultiCallable[
         google.longrunning.operations_pb2.ListOperationsRequest,
         google.longrunning.operations_pb2.ListOperationsResponse,
@@ -95,6 +112,80 @@ class OperationsStub:
     immediate response is no guarantee that the operation is done.
     """
 
+class OperationsAsyncStub:
+    """Manages long-running operations with an API service.
+
+    When an API method normally takes long time to complete, it can be designed
+    to return [Operation][google.longrunning.Operation] to the client, and the client can use this
+    interface to receive the real response asynchronously by polling the
+    operation resource, or pass the operation resource to another API (such as
+    Google Cloud Pub/Sub API) to receive the response.  Any API service that
+    returns long-running operations should implement the `Operations` interface
+    so developers can have a consistent client experience.
+    """
+
+    ListOperations: grpc.aio.UnaryUnaryMultiCallable[
+        google.longrunning.operations_pb2.ListOperationsRequest,
+        google.longrunning.operations_pb2.ListOperationsResponse,
+    ]
+    """Lists operations that match the specified filter in the request. If the
+    server doesn't support this method, it returns `UNIMPLEMENTED`.
+
+    NOTE: the `name` binding allows API services to override the binding
+    to use different resource name schemes, such as `users/*/operations`. To
+    override the binding, API services can add a binding such as
+    `"/v1/{name=users/*}/operations"` to their service configuration.
+    For backwards compatibility, the default name includes the operations
+    collection id, however overriding users must ensure the name binding
+    is the parent resource, without the operations collection id.
+    """
+    GetOperation: grpc.aio.UnaryUnaryMultiCallable[
+        google.longrunning.operations_pb2.GetOperationRequest,
+        google.longrunning.operations_pb2.Operation,
+    ]
+    """Gets the latest state of a long-running operation.  Clients can use this
+    method to poll the operation result at intervals as recommended by the API
+    service.
+    """
+    DeleteOperation: grpc.aio.UnaryUnaryMultiCallable[
+        google.longrunning.operations_pb2.DeleteOperationRequest,
+        google.protobuf.empty_pb2.Empty,
+    ]
+    """Deletes a long-running operation. This method indicates that the client is
+    no longer interested in the operation result. It does not cancel the
+    operation. If the server doesn't support this method, it returns
+    `google.rpc.Code.UNIMPLEMENTED`.
+    """
+    CancelOperation: grpc.aio.UnaryUnaryMultiCallable[
+        google.longrunning.operations_pb2.CancelOperationRequest,
+        google.protobuf.empty_pb2.Empty,
+    ]
+    """Starts asynchronous cancellation on a long-running operation.  The server
+    makes a best effort to cancel the operation, but success is not
+    guaranteed.  If the server doesn't support this method, it returns
+    `google.rpc.Code.UNIMPLEMENTED`.  Clients can use
+    [Operations.GetOperation][google.longrunning.Operations.GetOperation] or
+    other methods to check whether the cancellation succeeded or whether the
+    operation completed despite cancellation. On successful cancellation,
+    the operation is not deleted; instead, it becomes an operation with
+    an [Operation.error][google.longrunning.Operation.error] value with a [google.rpc.Status.code][google.rpc.Status.code] of 1,
+    corresponding to `Code.CANCELLED`.
+    """
+    WaitOperation: grpc.aio.UnaryUnaryMultiCallable[
+        google.longrunning.operations_pb2.WaitOperationRequest,
+        google.longrunning.operations_pb2.Operation,
+    ]
+    """Waits until the specified long-running operation is done or reaches at most
+    a specified timeout, returning the latest state.  If the operation is
+    already done, the latest state is immediately returned.  If the timeout
+    specified is greater than the default HTTP/RPC timeout, the HTTP/RPC
+    timeout is used.  If the server does not support this method, it returns
+    `google.rpc.Code.UNIMPLEMENTED`.
+    Note that this method is on a best-effort basis.  It may return the latest
+    state before the specified timeout (including immediately), meaning even an
+    immediate response is no guarantee that the operation is done.
+    """
+
 class OperationsServicer(metaclass=abc.ABCMeta):
     """Manages long-running operations with an API service.
 
@@ -111,8 +202,13 @@ class OperationsServicer(metaclass=abc.ABCMeta):
     def ListOperations(
         self,
         request: google.longrunning.operations_pb2.ListOperationsRequest,
-        context: grpc.ServicerContext,
-    ) -> google.longrunning.operations_pb2.ListOperationsResponse:
+        context: _ServicerContext,
+    ) -> typing.Union[
+        google.longrunning.operations_pb2.ListOperationsResponse,
+        collections.abc.Awaitable[
+            google.longrunning.operations_pb2.ListOperationsResponse
+        ],
+    ]:
         """Lists operations that match the specified filter in the request. If the
         server doesn't support this method, it returns `UNIMPLEMENTED`.
 
@@ -124,33 +220,45 @@ class OperationsServicer(metaclass=abc.ABCMeta):
         collection id, however overriding users must ensure the name binding
         is the parent resource, without the operations collection id.
         """
+
     @abc.abstractmethod
     def GetOperation(
         self,
         request: google.longrunning.operations_pb2.GetOperationRequest,
-        context: grpc.ServicerContext,
-    ) -> google.longrunning.operations_pb2.Operation:
+        context: _ServicerContext,
+    ) -> typing.Union[
+        google.longrunning.operations_pb2.Operation,
+        collections.abc.Awaitable[google.longrunning.operations_pb2.Operation],
+    ]:
         """Gets the latest state of a long-running operation.  Clients can use this
         method to poll the operation result at intervals as recommended by the API
         service.
         """
+
     @abc.abstractmethod
     def DeleteOperation(
         self,
         request: google.longrunning.operations_pb2.DeleteOperationRequest,
-        context: grpc.ServicerContext,
-    ) -> google.protobuf.empty_pb2.Empty:
+        context: _ServicerContext,
+    ) -> typing.Union[
+        google.protobuf.empty_pb2.Empty,
+        collections.abc.Awaitable[google.protobuf.empty_pb2.Empty],
+    ]:
         """Deletes a long-running operation. This method indicates that the client is
         no longer interested in the operation result. It does not cancel the
         operation. If the server doesn't support this method, it returns
         `google.rpc.Code.UNIMPLEMENTED`.
         """
+
     @abc.abstractmethod
     def CancelOperation(
         self,
         request: google.longrunning.operations_pb2.CancelOperationRequest,
-        context: grpc.ServicerContext,
-    ) -> google.protobuf.empty_pb2.Empty:
+        context: _ServicerContext,
+    ) -> typing.Union[
+        google.protobuf.empty_pb2.Empty,
+        collections.abc.Awaitable[google.protobuf.empty_pb2.Empty],
+    ]:
         """Starts asynchronous cancellation on a long-running operation.  The server
         makes a best effort to cancel the operation, but success is not
         guaranteed.  If the server doesn't support this method, it returns
@@ -162,12 +270,16 @@ class OperationsServicer(metaclass=abc.ABCMeta):
         an [Operation.error][google.longrunning.Operation.error] value with a [google.rpc.Status.code][google.rpc.Status.code] of 1,
         corresponding to `Code.CANCELLED`.
         """
+
     @abc.abstractmethod
     def WaitOperation(
         self,
         request: google.longrunning.operations_pb2.WaitOperationRequest,
-        context: grpc.ServicerContext,
-    ) -> google.longrunning.operations_pb2.Operation:
+        context: _ServicerContext,
+    ) -> typing.Union[
+        google.longrunning.operations_pb2.Operation,
+        collections.abc.Awaitable[google.longrunning.operations_pb2.Operation],
+    ]:
         """Waits until the specified long-running operation is done or reaches at most
         a specified timeout, returning the latest state.  If the operation is
         already done, the latest state is immediately returned.  If the timeout
@@ -180,5 +292,5 @@ class OperationsServicer(metaclass=abc.ABCMeta):
         """
 
 def add_OperationsServicer_to_server(
-    servicer: OperationsServicer, server: grpc.Server
+    servicer: OperationsServicer, server: typing.Union[grpc.Server, grpc.aio.Server]
 ) -> None: ...

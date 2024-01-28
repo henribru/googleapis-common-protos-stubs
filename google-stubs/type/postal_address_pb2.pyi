@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import builtins
 import collections.abc
 import google.protobuf.descriptor
@@ -149,6 +150,7 @@ class PostalAddress(google.protobuf.message.Message):
         addresses (as opposed to guessing which parts of the address should be
         localities or administrative areas).
         """
+
     @property
     def recipients(
         self,
