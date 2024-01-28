@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import builtins
 import collections.abc
 import google.protobuf.descriptor
@@ -36,6 +37,7 @@ class GapicMetadata(google.protobuf.message.Message):
     """
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     @typing_extensions.final
     class ServicesEntry(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -70,6 +72,7 @@ class GapicMetadata(google.protobuf.message.Message):
         """
 
         DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
         @typing_extensions.final
         class ClientsEntry(google.protobuf.message.Message):
             DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -92,6 +95,7 @@ class GapicMetadata(google.protobuf.message.Message):
                 self,
                 field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
             ) -> None: ...
+
         CLIENTS_FIELD_NUMBER: builtins.int
         @property
         def clients(
@@ -102,10 +106,12 @@ class GapicMetadata(google.protobuf.message.Message):
         def __init__(
             self,
             *,
-            clients: collections.abc.Mapping[
-                builtins.str, global___GapicMetadata.ServiceAsClient
-            ]
-            | None = ...,
+            clients: (
+                collections.abc.Mapping[
+                    builtins.str, global___GapicMetadata.ServiceAsClient
+                ]
+                | None
+            ) = ...,
         ) -> None: ...
         def ClearField(
             self, field_name: typing_extensions.Literal["clients", b"clients"]
@@ -116,6 +122,7 @@ class GapicMetadata(google.protobuf.message.Message):
         """Information about a specific client implementing a proto-defined service."""
 
         DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
         @typing_extensions.final
         class RpcsEntry(google.protobuf.message.Message):
             DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -138,6 +145,7 @@ class GapicMetadata(google.protobuf.message.Message):
                 self,
                 field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
             ) -> None: ...
+
         LIBRARY_CLIENT_FIELD_NUMBER: builtins.int
         RPCS_FIELD_NUMBER: builtins.int
         library_client: builtins.str
@@ -156,14 +164,15 @@ class GapicMetadata(google.protobuf.message.Message):
             The key name is the name of the RPC as defined and formated in
             the proto file.
             """
+
         def __init__(
             self,
             *,
             library_client: builtins.str = ...,
-            rpcs: collections.abc.Mapping[
-                builtins.str, global___GapicMetadata.MethodList
-            ]
-            | None = ...,
+            rpcs: (
+                collections.abc.Mapping[builtins.str, global___GapicMetadata.MethodList]
+                | None
+            ) = ...,
         ) -> None: ...
         def ClearField(
             self,
@@ -192,6 +201,7 @@ class GapicMetadata(google.protobuf.message.Message):
             GAPIC. These names should be formatted as they appear in the
             source code.
             """
+
         def __init__(
             self,
             *,
@@ -200,6 +210,7 @@ class GapicMetadata(google.protobuf.message.Message):
         def ClearField(
             self, field_name: typing_extensions.Literal["methods", b"methods"]
         ) -> None: ...
+
     SCHEMA_FIELD_NUMBER: builtins.int
     COMMENT_FIELD_NUMBER: builtins.int
     LANGUAGE_FIELD_NUMBER: builtins.int
@@ -234,6 +245,7 @@ class GapicMetadata(google.protobuf.message.Message):
         The key is the name of the service as it appears in the .proto
         file.
         """
+
     def __init__(
         self,
         *,
@@ -242,10 +254,12 @@ class GapicMetadata(google.protobuf.message.Message):
         language: builtins.str = ...,
         proto_package: builtins.str = ...,
         library_package: builtins.str = ...,
-        services: collections.abc.Mapping[
-            builtins.str, global___GapicMetadata.ServiceForTransport
-        ]
-        | None = ...,
+        services: (
+            collections.abc.Mapping[
+                builtins.str, global___GapicMetadata.ServiceForTransport
+            ]
+            | None
+        ) = ...,
     ) -> None: ...
     def ClearField(
         self,

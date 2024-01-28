@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import builtins
 import google.protobuf.descriptor
 import google.protobuf.message
@@ -182,6 +183,7 @@ class Color(google.protobuf.message.Message):
         If omitted, this color object is rendered as a solid color
         (as if the alpha value had been explicitly given a value of 1.0).
         """
+
     def __init__(
         self,
         *,

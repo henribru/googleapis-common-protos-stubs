@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import builtins
 import google.protobuf.descriptor
 import google.protobuf.message
@@ -58,6 +59,7 @@ class PhoneNumber(google.protobuf.message.Message):
     """
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     @typing_extensions.final
     class ShortCode(google.protobuf.message.Message):
         """An object representing a short code, which is a phone number that is
@@ -98,6 +100,7 @@ class PhoneNumber(google.protobuf.message.Message):
                 "number", b"number", "region_code", b"region_code"
             ],
         ) -> None: ...
+
     E164_NUMBER_FIELD_NUMBER: builtins.int
     SHORT_CODE_FIELD_NUMBER: builtins.int
     EXTENSION_FIELD_NUMBER: builtins.int

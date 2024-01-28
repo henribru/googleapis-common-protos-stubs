@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import builtins
 import collections.abc
 import google.protobuf.any_pb2
@@ -67,6 +68,7 @@ class Operation(google.protobuf.message.Message):
     @property
     def error(self) -> google.rpc.status_pb2.Status:
         """The error result of the operation in case of failure or cancellation."""
+
     @property
     def response(self) -> google.protobuf.any_pb2.Any:
         """The normal response of the operation in case of success.  If the original
@@ -78,6 +80,7 @@ class Operation(google.protobuf.message.Message):
         is `TakeSnapshot()`, the inferred response type is
         `TakeSnapshotResponse`.
         """
+
     def __init__(
         self,
         *,
@@ -273,6 +276,7 @@ class WaitOperationRequest(google.protobuf.message.Message):
         will be at most the time permitted by the underlying HTTP/RPC protocol.
         If RPC context deadline is also specified, the shorter one will be used.
         """
+
     def __init__(
         self,
         *,

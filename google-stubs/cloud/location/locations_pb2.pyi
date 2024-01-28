@@ -15,6 +15,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import builtins
 import collections.abc
 import google.protobuf.any_pb2
@@ -129,6 +130,7 @@ class Location(google.protobuf.message.Message):
     """A resource that represents Google Cloud Platform location."""
 
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
     @typing_extensions.final
     class LabelsEntry(google.protobuf.message.Message):
         DESCRIPTOR: google.protobuf.descriptor.Descriptor
@@ -147,6 +149,7 @@ class Location(google.protobuf.message.Message):
             self,
             field_name: typing_extensions.Literal["key", b"key", "value", b"value"],
         ) -> None: ...
+
     NAME_FIELD_NUMBER: builtins.int
     LOCATION_ID_FIELD_NUMBER: builtins.int
     DISPLAY_NAME_FIELD_NUMBER: builtins.int
@@ -170,11 +173,13 @@ class Location(google.protobuf.message.Message):
 
         {"cloud.googleapis.com/region": "us-east1"}
         """
+
     @property
     def metadata(self) -> google.protobuf.any_pb2.Any:
         """Service-specific metadata. For example the available capacity at the given
         location.
         """
+
     def __init__(
         self,
         *,
